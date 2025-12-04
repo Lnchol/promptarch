@@ -489,6 +489,12 @@ app.post('/api/payments/cleanup-expired', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Export app for Netlify Functions
+export { app };
+
+// Only start server if not running in Netlify Functions
+if (!process.env.NETLIFY) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
