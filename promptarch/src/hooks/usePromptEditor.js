@@ -55,16 +55,15 @@ ${customRules.join(', ')}`;
     }
 
     const stackList = Object.keys(techStack).filter(k => techStack[k]).join(', ');
+    const isTechCategory = ['web', 'mobile', 'windows'].includes(selectedCategory);
+
     return `--- SYSTEM INSTRUCTION ---
 ### ROLE
 ${role}
 
 ### TASK
 ${task}
-
-### STACK
-${stackList}
-
+${isTechCategory && stackList ? `\n### STACK\n${stackList}\n` : ''}
 ### TONE & STYLE
 - Tone: ${tone}
 - Style: ${style}
@@ -129,6 +128,9 @@ ${customRules.join('\n')}`;
     if (selectedCategory === 'mobile') context = "mobile app design system (iOS/Android)";
     else if (selectedCategory === 'windows') context = "Windows desktop application design system";
     else if (selectedCategory === 'picture') context = "detailed image generation prompt description";
+    else if (selectedCategory === 'engineering') context = "engineering system design and calculations";
+    else if (selectedCategory === 'fluid_mechanics') context = "fluid mechanics and CFD simulation expert prompt";
+    else if (selectedCategory === 'general') context = "general knowledge and analysis prompt";
 
     const prompt = `Generate ${context} for: "${magicInput}". Ensure the response fields (role, task, focus, tone, style) are tailored to this context.`;
     const result = await callGemini(prompt, schema);

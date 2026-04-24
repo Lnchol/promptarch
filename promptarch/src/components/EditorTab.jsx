@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Loader2, Wand2, Globe, Smartphone, Monitor, Image as ImageIcon, Code2, Palette, Box, Command, CheckCircle, Terminal, Download, Save, ClipboardPaste, FileText } from 'lucide-react';
+import { Sparkles, Loader2, Wand2, Globe, Smartphone, Monitor, Image as ImageIcon, Code2, Palette, Box, Command, CheckCircle, Terminal, Download, Save, ClipboardPaste, FileText, Wrench, Waves, BookOpen } from 'lucide-react';
 
 export default function EditorTab({ 
   editorState, 
@@ -132,8 +132,8 @@ export default function EditorTab({
               {/* CATEGORY SELECTION */}
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Category</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {['web', 'mobile', 'windows', 'picture'].map(cat => (
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                  {['web', 'mobile', 'windows', 'engineering', 'fluid_mechanics', 'general'].map(cat => (
                     <button
                       key={cat}
                       onClick={() => handleCategoryChange(cat)}
@@ -147,7 +147,10 @@ export default function EditorTab({
                       {cat === 'mobile' && <Smartphone size={18} />}
                       {cat === 'windows' && <Monitor size={18} />}
                       {cat === 'picture' && <ImageIcon size={18} />}
-                      {t(`categories.${cat}`)}
+                      {cat === 'engineering' && <Wrench size={18} />}
+                      {cat === 'fluid_mechanics' && <Waves size={18} />}
+                      {cat === 'general' && <BookOpen size={18} />}
+                      {t(`categories.${cat}`) || cat}
                     </button>
                   ))}
                 </div>
@@ -212,8 +215,8 @@ export default function EditorTab({
                 />
               </div>
               
-              {/* TECH STACK (Hidden for Picture) */}
-              {selectedCategory !== 'picture' && (
+              {/* TECH STACK (Hidden for non-software categories) */}
+              {['web', 'mobile', 'windows'].includes(selectedCategory) && (
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Tech Stack</label>
                   <div className="grid grid-cols-2 gap-2">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Search, User } from 'lucide-react';
+import { Home, Search, User, BookOpen } from 'lucide-react';
 
 export default function BottomNav({ activeTab, setActiveTab, t }) {
   return (
@@ -11,6 +11,13 @@ export default function BottomNav({ activeTab, setActiveTab, t }) {
         >
           <Home size={20} strokeWidth={activeTab === 'editor' ? 2.5 : 2} />
           <span className="text-[10px] font-bold uppercase tracking-wider">{t('nav_editor')}</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('library')}
+          className={`flex flex-col items-center gap-1 w-full h-full justify-center ${activeTab === 'library' ? 'text-industrial-600 dark:text-acid-500 bg-zinc-50 dark:bg-zinc-900' : 'text-zinc-400'}`}
+        >
+          <BookOpen size={20} strokeWidth={activeTab === 'library' ? 2.5 : 2} />
+          <span className="text-[10px] font-bold uppercase tracking-wider">{t('nav_library') || 'Library'}</span>
         </button>
         <button 
           onClick={() => setActiveTab('community')}

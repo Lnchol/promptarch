@@ -2,6 +2,7 @@ export const translations = {
   en: {
     app_name: "Prompt Architect",
     nav_editor: "editor",
+    nav_library: "library",
     nav_community: "community",
     nav_account: "account",
     magic_label: "Magic Generator",
@@ -66,7 +67,10 @@ export const translations = {
       web: "Web App",
       mobile: "Mobile App",
       windows: "Windows App",
-      picture: "Picture Generation"
+      picture: "Picture Generation",
+      engineering: "Engineering",
+      fluid_mechanics: "Fluid Mechanics",
+      general: "General"
     },
     custom_prompt_label: "Custom Prompt",
     custom_prompt_placeholder: "Paste or write your custom prompt here to share with the community...",
@@ -84,6 +88,7 @@ export const translations = {
   tr: {
     app_name: "Prompt Mimarı",
     nav_editor: "editör",
+    nav_library: "kütüphane",
     nav_community: "topluluk",
     nav_account: "hesap",
     magic_label: "Sihirli Oluşturucu",
@@ -148,7 +153,10 @@ export const translations = {
       web: "Web Uygulaması",
       mobile: "Mobil Uygulama",
       windows: "Windows Uygulaması",
-      picture: "Resim Oluşturma"
+      picture: "Resim Oluşturma",
+      engineering: "Mühendislik",
+      fluid_mechanics: "Akışkanlar Mekaniği",
+      general: "Genel"
     },
     custom_prompt_label: "Özel Prompt",
     custom_prompt_placeholder: "Toplulukla paylaşmak için özel promptunuzu buraya yapıştırın veya yazın...",

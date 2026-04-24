@@ -7,6 +7,7 @@ import SubscriptionModal from './components/SubscriptionModal';
 import EditorTab from './components/EditorTab';
 import CommunityTab from './components/CommunityTab';
 import AccountTab from './components/AccountTab';
+import LibraryTab from './components/LibraryTab';
 
 import { useTheme } from './hooks/useTheme';
 import { useLanguage } from './hooks/useLanguage';
@@ -118,6 +119,17 @@ export default function PromptArchitect() {
             setRole={editorState.setRole}
             setTask={editorState.setTask}
             setActiveTab={setActiveTab}
+          />
+        )}
+
+        {activeTab === 'library' && (
+          <LibraryTab 
+            t={t}
+            setActiveTab={setActiveTab}
+            loadPromptIntoEditor={(promptText) => {
+              editorState.setEditorMode('custom');
+              editorState.setCustomPrompt(promptText);
+            }}
           />
         )}
 

@@ -20,7 +20,7 @@ export default function Header({ t, theme, toggleTheme, lang, setLang, activeTab
           
           <div className="flex items-center gap-4">
             <nav className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-900 p-1 border border-zinc-200 dark:border-zinc-800">
-              {['editor', 'community', 'account'].map(tab => (
+              {['editor', 'library', 'community', 'account'].map(tab => (
                 <button 
                   key={tab} 
                   onClick={() => setActiveTab(tab)} 
@@ -30,7 +30,7 @@ export default function Header({ t, theme, toggleTheme, lang, setLang, activeTab
                       : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300'
                   }`}
                 >
-                  {t(`nav_${tab}`)}
+                  {t(`nav_${tab}`) || tab}
                 </button>
               ))}
             </nav>
