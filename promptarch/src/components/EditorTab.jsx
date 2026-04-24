@@ -215,33 +215,54 @@ export default function EditorTab({
                 />
               </div>
               
-              {/* TECH STACK (Hidden for non-software categories) */}
-              {['web', 'mobile', 'windows'].includes(selectedCategory) && (
+              {/* TOOL / TECH STACK (Hidden for Picture) */}
+              {selectedCategory !== 'picture' && (
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Tech Stack</label>
+                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
+                    {['engineering', 'fluid_mechanics', 'general'].includes(selectedCategory) ? (t('tools_label') || 'Tools & Software') : 'Tech Stack'}
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
-                    {['react', 'tailwind', 'threejs', 'flutter', 'swift', 'kotlin', 'objective_c', 'c_sharp', 'dot_net'].map(tech => {
-                      const Icon = tech === 'react' ? Code2 : tech === 'tailwind' ? Palette : tech === 'threejs' ? Box : tech === 'swift' || tech === 'objective_c' ? Command : tech === 'c_sharp' || tech === 'dot_net' ? Monitor : Smartphone;
-                      return (
-                      <label key={tech} className="flex items-start gap-3 p-3 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer hover:border-industrial-500 dark:hover:border-acid-500 transition-colors group">
-                        <div className={`w-5 h-5 mt-0.5 border flex items-center justify-center shrink-0 transition-colors ${techStack[tech] ? 'bg-industrial-500 dark:bg-acid-500 border-industrial-500 dark:border-acid-500' : 'border-zinc-400 dark:border-zinc-600 group-hover:border-industrial-500 dark:group-hover:border-acid-500'}`}>
-                          {techStack[tech] && <CheckCircle size={12} className="text-white dark:text-black" />}
-                        </div>
-                        <input 
-                          type="checkbox" 
-                          checked={!!techStack[tech]} 
-                          onChange={() => setTechStack(prev => ({ ...prev, [tech]: !prev[tech] }))}
-                          className="hidden"
-                        />
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <Icon size={14} className="text-zinc-400 dark:text-zinc-500" />
-                            <span className="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">{tech.replace('_', ' ')}</span>
+                    {(() => {
+                      let items = [];
+                      if (selectedCategory === 'web') items = ['react', 'tailwind', 'threejs'];
+                      else if (selectedCategory === 'mobile') items = ['flutter', 'swift', 'kotlin', 'objective_c'];
+                      else if (selectedCategory === 'windows') items = ['c_sharp', 'dot_net'];
+                      else if (selectedCategory === 'engineering') items = ['matlab', 'python_sci', 'latex', 'solidworks', 'autocad', 'excel_data'];
+                      else if (selectedCategory === 'fluid_mechanics') items = ['ansys_fluent', 'openfoam', 'matlab', 'python_sci', 'latex', 'excel_data'];
+                      else if (selectedCategory === 'general') items = ['python_sci', 'latex', 'google_scholar', 'jupyter', 'excel_data'];
+                      return items.map(tech => {
+                        const iconLookup = {
+                          react: Code2, tailwind: Palette, threejs: Box,
+                          flutter: Smartphone, swift: Command, kotlin: Smartphone, objective_c: Command,
+                          c_sharp: Monitor, dot_net: Monitor,
+                          matlab: Terminal, python_sci: Code2, latex: FileText,
+                          ansys_fluent: Waves, openfoam: Waves,
+                          solidworks: Box, autocad: Box,
+                          google_scholar: BookOpen, jupyter: Code2, excel_data: Terminal
+                        };
+                        const Icon = iconLookup[tech] || Code2;
+                        const displayName = tech.replace(/_/g, ' ');
+                        return (
+                        <label key={tech} className="flex items-start gap-3 p-3 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer hover:border-industrial-500 dark:hover:border-acid-500 transition-colors group">
+                          <div className={`w-5 h-5 mt-0.5 border flex items-center justify-center shrink-0 transition-colors ${techStack[tech] ? 'bg-industrial-500 dark:bg-acid-500 border-industrial-500 dark:border-acid-500' : 'border-zinc-400 dark:border-zinc-600 group-hover:border-industrial-500 dark:group-hover:border-acid-500'}`}>
+                            {techStack[tech] && <CheckCircle size={12} className="text-white dark:text-black" />}
                           </div>
-                          <span className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono mt-1 leading-tight">{t(`tech_descriptions.${tech}`)}</span>
-                        </div>
-                      </label>
-                    )})}
+                          <input 
+                            type="checkbox" 
+                            checked={!!techStack[tech]} 
+                            onChange={() => setTechStack(prev => ({ ...prev, [tech]: !prev[tech] }))}
+                            className="hidden"
+                          />
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <Icon size={14} className="text-zinc-400 dark:text-zinc-500" />
+                              <span className="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">{displayName}</span>
+                            </div>
+                            <span className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono mt-1 leading-tight">{t(`tech_descriptions.${tech}`) || ''}</span>
+                          </div>
+                        </label>
+                      )})
+                    })()}
                   </div>
                 </div>
               )}

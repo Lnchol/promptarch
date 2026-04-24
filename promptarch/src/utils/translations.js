@@ -61,7 +61,17 @@ export const translations = {
       kotlin: "Best for Android Apps",
       objective_c: "For Old iPhone Apps",
       c_sharp: "Best for Windows Apps",
-      dot_net: "Best for Enterprise"
+      dot_net: "Best for Enterprise",
+      matlab: "Numerical Computing & Simulation",
+      python_sci: "Python (NumPy, SciPy, Matplotlib)",
+      latex: "Scientific Document Writing",
+      ansys_fluent: "CFD & FEA Simulation Suite",
+      openfoam: "Open Source CFD Solver",
+      solidworks: "3D CAD & Mechanical Design",
+      autocad: "2D/3D Drafting & Drawing",
+      google_scholar: "Academic Paper Research",
+      jupyter: "Interactive Notebooks & Analysis",
+      excel_data: "Data Analysis & Spreadsheets"
     },
     categories: {
       web: "Web App",
@@ -147,7 +157,17 @@ export const translations = {
       kotlin: "Android Uygulamaları İçin",
       objective_c: "Eski iPhone Uygulamaları İçin",
       c_sharp: "Windows Uygulamaları İçin",
-      dot_net: "Kurumsal İçin En İyisi"
+      dot_net: "Kurumsal İçin En İyisi",
+      matlab: "Sayısal Hesaplama & Simülasyon",
+      python_sci: "Python (NumPy, SciPy, Matplotlib)",
+      latex: "Bilimsel Doküman Yazımı",
+      ansys_fluent: "CFD & FEA Simülasyon Paketi",
+      openfoam: "Açık Kaynak CFD Çözücü",
+      solidworks: "3D CAD & Mekanik Tasarım",
+      autocad: "2D/3D Çizim & Tasarım",
+      google_scholar: "Akademik Makale Araştırması",
+      jupyter: "İnteraktif Not Defterleri & Analiz",
+      excel_data: "Veri Analizi & Tablolama"
     },
     categories: {
       web: "Web Uygulaması",
