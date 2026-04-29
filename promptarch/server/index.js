@@ -1,12 +1,10 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-require('dotenv').config({ path: path.resolve(process.cwd(), '.env') });
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Import Firebase Admin and Iyzico
 import { db, auth } from './firebase.js';

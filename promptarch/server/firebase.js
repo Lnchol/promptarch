@@ -1,8 +1,6 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const admin = require("firebase-admin");
-const path = require("path");
-require('dotenv').config({ path: path.resolve(process.cwd(), '.env') });
+import admin from "firebase-admin";
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Initialize Firebase Admin
 // You must provide the path to your service account key JSON file in .env
@@ -10,9 +8,13 @@ require('dotenv').config({ path: path.resolve(process.cwd(), '.env') });
 const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
 
 if (serviceAccountPath) {
-  const serviceAccount = require(path.resolve(process.cwd(), serviceAccountPath));
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+  import('fs').then(fs => {
+    import('path').then(pathModule => {
+      const serviceAccount = JSON.parse(fs.readFileSync(pathModule.resolve(process.cwd(), serviceAccountPath), 'utf8'));
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+    });
   });
 } else {
   // Fallback: Try to use individual env vars (useful for deployment platforms)

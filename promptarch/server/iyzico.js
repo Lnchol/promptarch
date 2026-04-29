@@ -1,8 +1,6 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const Iyzipay = require('iyzipay');
-const path = require("path");
-require('dotenv').config({ path: path.resolve(process.cwd(), '.env') });
+import Iyzipay from 'iyzipay';
+import dotenv from 'dotenv';
+dotenv.config();
 
 console.log("Iyzico Debug:");
 console.log("API_KEY present:", !!process.env.IYZICO_API_KEY);
