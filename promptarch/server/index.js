@@ -16,7 +16,7 @@ const PORT = 3001;
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
 
 // --- MIDDLEWARE ---
 app.use(helmet());
@@ -244,10 +244,19 @@ app.post('/api/generate', async (req, res) => {
     const langInstruction = language ? `Respond in ${language} language.` : "";
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt + ` \n\n${langInstruction}\nRespond strictly with valid JSON matching this schema: ` + JSON.stringify(schema) }] }],
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
     });
     
     let responseText = result.response.text();
-    responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+    
+    // Safety check: try to extract JSON if it's wrapped in other text
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      responseText = jsonMatch[0];
+    }
+    
     res.json(JSON.parse(responseText));
   } catch (error) {
     console.error("Gemini Error:", error);
