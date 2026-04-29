@@ -18,7 +18,7 @@ const PORT = 3001;
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // --- MIDDLEWARE ---
 app.use(helmet());
@@ -236,8 +236,7 @@ app.patch('/api/prompts/:id/share', authenticateToken, async (req, res) => {
   }
 });
 
-// --- AI GENERATION (DEPRECATED: Now handled client-side via Firebase Vertex AI) ---
-/*
+// --- AI GENERATION (Server-side - keeps API key secure) ---
 app.post('/api/generate', async (req, res) => {
   const { prompt, schema, language } = req.body;
   
@@ -250,7 +249,6 @@ app.post('/api/generate', async (req, res) => {
     });
     
     let responseText = result.response.text();
-    console.log("Gemini Raw Response:", responseText);
     responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
     res.json(JSON.parse(responseText));
   } catch (error) {
@@ -258,7 +256,6 @@ app.post('/api/generate', async (req, res) => {
     res.status(500).json({ error: "AI Generation Failed: " + error.message });
   }
 });
-*/
 
 // --- IYZICO PAYMENTS ---
 

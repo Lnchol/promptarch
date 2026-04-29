@@ -1,8 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useState } from "react";
-
-// Initialize Gemini with API key from env
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
 
 export const usePromptEditor = (token, lang) => {
   // ... state declarations ...
@@ -150,23 +146,23 @@ ${customRules.join('\n')}`;
     return sections;
   };
 
+  // Call server-side API instead of exposing API key in browser
   const callGemini = async (prompt, schema) => {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, schema, language: lang })
+      });
       
-      const langInstruction = lang ? `Respond in ${lang} language.` : "";
-      const fullPrompt = prompt + ` \n\n${langInstruction}\nRespond strictly with valid JSON matching this schema: ` + JSON.stringify(schema);
-
-      const result = await model.generateContent(fullPrompt);
-      const response = await result.response;
-      let text = response.text();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'AI generation failed');
+      }
       
-      // Clean up markdown code blocks if present
-      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      
-      return JSON.parse(text);
+      return await response.json();
     } catch (e) {
-      console.error("Gemini AI Error:", e);
+      console.error("AI Generation Error:", e);
       alert("AI Generation Failed: " + e.message);
       return null;
     }
