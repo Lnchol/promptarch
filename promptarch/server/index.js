@@ -23,7 +23,7 @@ const PORT = 3001;
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
 // --- MIDDLEWARE ---
 app.use(helmet());
@@ -260,7 +260,25 @@ function generateSmartFallback(promptText, schema) {
   let stack = {};
 
   // Detect category/stack from prompt
-  if (prompt.includes('web') || prompt.includes('react') || prompt.includes('html') || prompt.includes('website') || prompt.includes('site')) {
+  if (prompt.includes('claude.md') || prompt.includes('claude_md') || prompt.includes('guidelines') || prompt.includes('claude')) {
+    role = "Expert AI Coding Assistant Guidelines Specialist";
+    task = "Generate a clear, token-efficient CLAUDE.md file containing developer guidelines, styling rules, and commands.";
+    focus = "Token efficiency, clear developer workflows, and precise coding rules.";
+    tone = "instructive";
+    style = "concise";
+    stack = {
+      skipFiller: true,
+      codeDiffs: true,
+      noExplanation: true,
+      dryRunOnly: false
+    };
+    rules = [
+      "Respond strictly using XML tags for guidelines structure.",
+      "Never rewrite entire files; output only target changes or diff blocks.",
+      "Minimize non-code conversational elements to save tokens.",
+      "Verify all code edits before completing the instruction task."
+    ];
+  } else if (prompt.includes('web') || prompt.includes('react') || prompt.includes('html') || prompt.includes('website') || prompt.includes('site')) {
     role = "Expert Website Developer";
     task = "Develop a responsive, visually stunning website using modern layout and CSS/JS standards.";
     focus = "Responsive UI, smooth micro-interactions, and visual excellence.";

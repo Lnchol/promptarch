@@ -449,8 +449,8 @@ export default function EditorTab({
                       <span className="text-zinc-500 block uppercase">Reasoning:</span>
                       <span className="font-bold text-zinc-800 dark:text-zinc-200">
                         {editorState.targetTool === 'claude' && '★★★★★ (5/5)'}
-                        {editorState.targetTool === 'gemini' && '★★★★☆ (4/5)'}
-                        {editorState.targetTool === 'chatgpt' && '★★★★☆ (4/5)'}
+                        {editorState.targetTool === 'gemini' && '★★★★★ (5/5)'}
+                        {editorState.targetTool === 'chatgpt' && '★★★★★ (5/5)'}
                         {editorState.targetTool === 'cursor' && '★★★★★ (5/5)'}
                         {editorState.targetTool === 'copilot' && '★★★☆☆ (3/5)'}
                       </span>
@@ -458,9 +458,9 @@ export default function EditorTab({
                     <div>
                       <span className="text-zinc-500 block uppercase">Context Limit:</span>
                       <span className="font-bold text-zinc-800 dark:text-zinc-200">
-                        {editorState.targetTool === 'claude' && '★★★★☆ (200K)'}
-                        {editorState.targetTool === 'gemini' && '★★★★★ (1M-2M)'}
-                        {editorState.targetTool === 'chatgpt' && '★★★☆☆ (128K)'}
+                        {editorState.targetTool === 'claude' && '★★★★★ (1M)'}
+                        {editorState.targetTool === 'gemini' && '★★★★★ (2M+)'}
+                        {editorState.targetTool === 'chatgpt' && '★★★★☆ (256K)'}
                         {editorState.targetTool === 'cursor' && '★★★★☆ (IDE based)'}
                         {editorState.targetTool === 'copilot' && '★★☆☆☆ (Editor local)'}
                       </span>
@@ -489,19 +489,19 @@ export default function EditorTab({
 
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-mono">
                     {editorState.targetTool === 'claude' && (
-                      <span><strong>Claude 3.5 Sonnet:</strong> Recommended for advanced reasoning, front-end visual components, and clean code generation. It excels at complex, modular structures, aesthetic styling, and debugging.</span>
+                      <span><strong>Claude 5 Sonnet:</strong> Recommended for state-of-the-art agentic workflows, advanced code synthesis, and multi-modal styling. It delivers unparalleled precision for modular software architectures.</span>
                     )}
                     {editorState.targetTool === 'gemini' && (
-                      <span><strong>Gemini 2.5 Pro/Flash:</strong> Recommended for huge codebases, deep context processing, and multi-file code review. Its 1M+ context window makes it unique for analyzing complete repositories.</span>
+                      <span><strong>Gemini 3.5 Pro/Flash:</strong> Recommended for parsing entire massive repositories, context-rich codebase analysis, and cross-file refactoring. Its industry-leading 2M+ token context window enables deep architectural understanding.</span>
                     )}
                     {editorState.targetTool === 'chatgpt' && (
-                      <span><strong>ChatGPT (GPT-4o):</strong> Recommended for quick scripts, general utilities, logic explanations, and standalone files. Excellent conversational coding assistant for direct copy-paste.</span>
+                      <span><strong>ChatGPT (GPT-5 / o3-mini):</strong> Recommended for complex algorithmic logic, quick utilities, and inline problem-solving. Features powerful reasoning models for code design.</span>
                     )}
                     {editorState.targetTool === 'cursor' && (
-                      <span><strong>Cursor IDE:</strong> Recommended for workspace-wide refactoring and real-time project edits. Formats instructions directly as a <code>.cursorrules</code> file to power inline code editing.</span>
+                      <span><strong>Cursor IDE:</strong> Powered by Claude 5 & GPT-5. Recommended for workspace-wide refactoring and real-time project edits. Formats instructions directly as a <code>.cursorrules</code> file to power inline code editing.</span>
                     )}
                     {editorState.targetTool === 'copilot' && (
-                      <span><strong>GitHub Copilot:</strong> Recommended for fast, inline, real-time code auto-completions as you type. Formats instructions into a <code>copilot-instructions.md</code> file to direct the extension's context.</span>
+                      <span><strong>GitHub Copilot:</strong> Powered by Claude 5 & GPT-5. Recommended for fast, inline, real-time code auto-completions as you type. Formats instructions into a <code>copilot-instructions.md</code> file to direct the extension's context.</span>
                     )}
                   </p>
                 </div>

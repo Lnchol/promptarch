@@ -572,6 +572,36 @@ export const usePromptEditor = (token, lang) => {
   const handleMagicGenerate = async () => {
     if (!magicInput.trim()) return;
     setIsAiLoading(true);
+
+    const stackProperties = selectedCategory === 'claude_md'
+      ? {
+          skipFiller: { type: "BOOLEAN" },
+          codeDiffs: { type: "BOOLEAN" },
+          noExplanation: { type: "BOOLEAN" },
+          dryRunOnly: { type: "BOOLEAN" }
+        }
+      : {
+          threejs: { type: "BOOLEAN" },
+          tailwind: { type: "BOOLEAN" },
+          react: { type: "BOOLEAN" },
+          flutter: { type: "BOOLEAN" },
+          swift: { type: "BOOLEAN" },
+          kotlin: { type: "BOOLEAN" },
+          objective_c: { type: "BOOLEAN" },
+          c_sharp: { type: "BOOLEAN" },
+          dot_net: { type: "BOOLEAN" },
+          matlab: { type: "BOOLEAN" },
+          python_sci: { type: "BOOLEAN" },
+          latex: { type: "BOOLEAN" },
+          ansys_fluent: { type: "BOOLEAN" },
+          openfoam: { type: "BOOLEAN" },
+          solidworks: { type: "BOOLEAN" },
+          autocad: { type: "BOOLEAN" },
+          google_scholar: { type: "BOOLEAN" },
+          jupyter: { type: "BOOLEAN" },
+          excel_data: { type: "BOOLEAN" }
+        };
+
     const schema = {
       type: "OBJECT",
       properties: {
@@ -582,27 +612,7 @@ export const usePromptEditor = (token, lang) => {
         style: { type: "STRING" },
         stack: {
           type: "OBJECT",
-          properties: {
-            threejs: { type: "BOOLEAN" },
-            tailwind: { type: "BOOLEAN" },
-            react: { type: "BOOLEAN" },
-            flutter: { type: "BOOLEAN" },
-            swift: { type: "BOOLEAN" },
-            kotlin: { type: "BOOLEAN" },
-            objective_c: { type: "BOOLEAN" },
-            c_sharp: { type: "BOOLEAN" },
-            dot_net: { type: "BOOLEAN" },
-            matlab: { type: "BOOLEAN" },
-            python_sci: { type: "BOOLEAN" },
-            latex: { type: "BOOLEAN" },
-            ansys_fluent: { type: "BOOLEAN" },
-            openfoam: { type: "BOOLEAN" },
-            solidworks: { type: "BOOLEAN" },
-            autocad: { type: "BOOLEAN" },
-            google_scholar: { type: "BOOLEAN" },
-            jupyter: { type: "BOOLEAN" },
-            excel_data: { type: "BOOLEAN" }
-          }
+          properties: stackProperties
         },
         suggestedSecurityChecks: { type: "ARRAY", items: { type: "STRING" } },
         suggestedSkills: { type: "ARRAY", items: { type: "STRING" } },
@@ -619,6 +629,7 @@ export const usePromptEditor = (token, lang) => {
     else if (selectedCategory === 'engineering') { context = "engineering system design and calculations"; defaultTone = "technical"; defaultStyle = "classic"; }
     else if (selectedCategory === 'fluid_mechanics') { context = "fluid mechanics and CFD simulation expert prompt"; defaultTone = "technical"; defaultStyle = "classic"; }
     else if (selectedCategory === 'general') { context = "general knowledge and analysis prompt"; }
+    else if (selectedCategory === 'claude_md') { context = "CLAUDE.md developer guidelines and workspace rules"; defaultTone = "minimalist"; defaultStyle = "modern"; }
 
     const prompt = `Generate ${context} for: "${magicInput}". Pick a tone and style that best fits the domain (e.g. "technical" for engineering, "creative" for art, "professional" for business). Ensure the response fields (role, task, focus, tone, style, suggestedSecurityChecks, suggestedSkills) are tailored to this context. Select relevant security checks and capability skills.`;
     const result = await callGemini(prompt, schema);
