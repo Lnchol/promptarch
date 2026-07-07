@@ -133,6 +133,9 @@ export const translations = {
     section_rules: "Rules",
     section_security: "Security",
     section_skills: "Skills",
+    target_assistant: "Target AI Assistant",
+    best_tool_guide: "Which tool is best for what?",
+    compare_capabilities: "Compare Capabilities",
   },
   tr: {
     app_name: "Prompt Mimarı",
@@ -263,6 +266,9 @@ export const translations = {
     section_rules: "Kurallar",
     section_security: "Güvenlik",
     section_skills: "Yetenekler",
+    target_assistant: "Hedef Yapay Zeka Asistanı",
+    best_tool_guide: "Hangi araç ne için en iyisi?",
+    compare_capabilities: "Yetenekleri Karşılaştır",
   },
   de: {
     app_name: "Prompt Architekt",

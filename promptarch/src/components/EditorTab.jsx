@@ -92,6 +92,80 @@ export default function EditorTab({
   // Count active skills
   const activeSkillCount = selectedSkills ? Object.values(selectedSkills).filter(Boolean).length : 0;
 
+  // Get active theme styling for selected target tool
+  const getToolTheme = () => {
+    switch (editorState.targetTool) {
+      case 'claude':
+        return {
+          border: 'border-orange-500/40 dark:border-orange-500/30',
+          borderB: 'border-b border-orange-500/30 dark:border-orange-500/20',
+          bgHeader: 'bg-orange-500/5 dark:bg-orange-500/10',
+          textHeader: 'text-orange-600 dark:text-orange-400',
+          buttonPrimary: 'bg-orange-600 dark:bg-orange-500 text-white dark:text-black hover:bg-orange-500 dark:hover:bg-orange-400',
+          previewBg: 'bg-orange-500/[0.02] dark:bg-zinc-950',
+          label: 'CLAUDE.MD',
+          filename: 'claude.md'
+        };
+      case 'gemini':
+        return {
+          border: 'border-blue-500/40 dark:border-blue-500/30',
+          borderB: 'border-b border-blue-500/30 dark:border-blue-500/20',
+          bgHeader: 'bg-blue-500/5 dark:bg-blue-500/10',
+          textHeader: 'text-blue-600 dark:text-blue-400',
+          buttonPrimary: 'bg-blue-600 dark:bg-blue-500 text-white dark:text-black hover:bg-blue-500 dark:hover:bg-blue-400',
+          previewBg: 'bg-blue-500/[0.02] dark:bg-zinc-950',
+          label: 'PREVIEW.MD',
+          filename: 'prompt.md'
+        };
+      case 'chatgpt':
+        return {
+          border: 'border-emerald-500/40 dark:border-emerald-500/30',
+          borderB: 'border-b border-emerald-500/30 dark:border-emerald-500/20',
+          bgHeader: 'bg-emerald-500/5 dark:bg-emerald-500/10',
+          textHeader: 'text-emerald-600 dark:text-emerald-400',
+          buttonPrimary: 'bg-emerald-600 dark:bg-emerald-500 text-white dark:text-black hover:bg-emerald-500 dark:hover:bg-emerald-400',
+          previewBg: 'bg-emerald-500/[0.02] dark:bg-zinc-950',
+          label: 'INSTRUCTIONS.MD',
+          filename: 'prompt.md'
+        };
+      case 'cursor':
+        return {
+          border: 'border-cyan-500/40 dark:border-cyan-500/30',
+          borderB: 'border-b border-cyan-500/30 dark:border-cyan-500/20',
+          bgHeader: 'bg-cyan-500/5 dark:bg-cyan-500/10',
+          textHeader: 'text-cyan-600 dark:text-cyan-400',
+          buttonPrimary: 'bg-cyan-600 dark:bg-cyan-500 text-white dark:text-black hover:bg-cyan-500 dark:hover:bg-cyan-400',
+          previewBg: 'bg-cyan-500/[0.02] dark:bg-zinc-950',
+          label: '.CURSORRULES',
+          filename: '.cursorrules'
+        };
+      case 'copilot':
+        return {
+          border: 'border-purple-500/40 dark:border-purple-500/30',
+          borderB: 'border-b border-purple-500/30 dark:border-purple-500/20',
+          bgHeader: 'bg-purple-500/5 dark:bg-purple-500/10',
+          textHeader: 'text-purple-600 dark:text-purple-400',
+          buttonPrimary: 'bg-purple-600 dark:bg-purple-500 text-white dark:text-black hover:bg-purple-500 dark:hover:bg-purple-400',
+          previewBg: 'bg-purple-500/[0.02] dark:bg-zinc-950',
+          label: 'COPILOT-INSTRUCTIONS.MD',
+          filename: 'copilot-instructions.md'
+        };
+      default:
+        return {
+          border: 'border-zinc-300 dark:border-zinc-700',
+          borderB: 'border-b border-zinc-300 dark:border-zinc-700',
+          bgHeader: 'bg-zinc-50 dark:bg-zinc-900',
+          textHeader: 'text-zinc-500',
+          buttonPrimary: 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black hover:bg-industrial-500 dark:hover:bg-acid-500',
+          previewBg: 'bg-zinc-50 dark:bg-black',
+          label: 'PREVIEW.MD',
+          filename: 'prompt.md'
+        };
+    }
+  };
+
+  const theme = getToolTheme();
+
   return (
     <div className="grid lg:grid-cols-12 gap-8 md:gap-12">
       <div className="lg:col-span-7 space-y-6 md:space-y-8">
@@ -324,7 +398,7 @@ export default function EditorTab({
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
                   <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest">
-                    Target AI Assistant
+                    {t('target_assistant') || 'Target AI Assistant'}
                   </label>
                   <span className="text-[9px] text-industrial-500 dark:text-acid-400 font-mono font-bold bg-industrial-100 dark:bg-acid-900/30 px-1.5 py-0.5 rounded-sm">
                     Dynamic Prompt Tuning
@@ -333,11 +407,11 @@ export default function EditorTab({
                 
                 <div className="grid grid-cols-5 gap-2">
                   {[
-                    { key: 'claude', name: 'Claude', color: 'border-orange-500 hover:border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-500/5', activeColor: 'bg-orange-500 text-white dark:text-black border-orange-500' },
-                    { key: 'gemini', name: 'Gemini', color: 'border-blue-500 hover:border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-500/5', activeColor: 'bg-blue-600 text-white dark:text-black border-blue-600' },
-                    { key: 'chatgpt', name: 'ChatGPT', color: 'border-emerald-500 hover:border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5', activeColor: 'bg-emerald-600 text-white dark:text-black border-emerald-600' },
-                    { key: 'cursor', name: 'Cursor', color: 'border-cyan-500 hover:border-cyan-500 text-cyan-600 dark:text-cyan-400 bg-cyan-500/5', activeColor: 'bg-cyan-500 text-white dark:text-black border-cyan-500' },
-                    { key: 'copilot', name: 'Copilot', color: 'border-purple-500 hover:border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-500/5', activeColor: 'bg-purple-600 text-white dark:text-black border-purple-600' },
+                    { key: 'claude', name: 'Claude', color: 'border-orange-500/20 dark:border-orange-500/10 text-orange-600 dark:text-orange-400 bg-orange-500/5 hover:border-orange-500 hover:bg-orange-500/10', activeColor: 'bg-orange-500 text-white dark:text-black border-orange-500' },
+                    { key: 'gemini', name: 'Gemini', color: 'border-blue-500/20 dark:border-blue-500/10 text-blue-600 dark:text-blue-400 bg-blue-500/5 hover:border-blue-500 hover:bg-blue-500/10', activeColor: 'bg-blue-600 text-white dark:text-black border-blue-600' },
+                    { key: 'chatgpt', name: 'ChatGPT', color: 'border-emerald-500/20 dark:border-emerald-500/10 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 hover:border-emerald-500 hover:bg-emerald-500/10', activeColor: 'bg-emerald-600 text-white dark:text-black border-emerald-600' },
+                    { key: 'cursor', name: 'Cursor', color: 'border-cyan-500/20 dark:border-cyan-500/10 text-cyan-600 dark:text-cyan-400 bg-cyan-500/5 hover:border-cyan-500 hover:bg-cyan-500/10', activeColor: 'bg-cyan-500 text-white dark:text-black border-cyan-500' },
+                    { key: 'copilot', name: 'Copilot', color: 'border-purple-500/20 dark:border-purple-500/10 text-purple-600 dark:text-purple-400 bg-purple-500/5 hover:border-purple-500 hover:bg-purple-500/10', activeColor: 'bg-purple-600 text-white dark:text-black border-purple-600' },
                   ].map(tool => (
                     <button
                       key={tool.key}
@@ -346,7 +420,7 @@ export default function EditorTab({
                       className={`p-2 border text-[10px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-1 ${
                         editorState.targetTool === tool.key 
                           ? tool.activeColor 
-                          : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                          : tool.color
                       }`}
                     >
                       <span className="font-bold">{tool.name}</span>
@@ -354,13 +428,13 @@ export default function EditorTab({
                   ))}
                 </div>
 
-                <div className="p-4 border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50 space-y-3">
+                <div className={`p-4 border bg-zinc-50 dark:bg-zinc-900/50 space-y-3 transition-colors ${editorState.targetTool === 'claude' ? 'border-orange-500/30' : 'border-zinc-300 dark:border-zinc-700'}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-widest flex items-center gap-2">
-                      <Lightbulb size={12} className="text-amber-500" />
-                      Which tool is best for what?
+                      <Lightbulb size={12} className={editorState.targetTool === 'claude' ? 'text-orange-500' : 'text-amber-500'} />
+                      {t('best_tool_guide') || 'Which tool is best for what?'}
                     </span>
-                    <span className="text-[9px] text-zinc-400 font-mono">Compare Capabilities</span>
+                    <span className="text-[9px] text-zinc-400 font-mono">{t('compare_capabilities') || 'Compare Capabilities'}</span>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] border-b border-zinc-200 dark:border-zinc-800 pb-3">
@@ -700,11 +774,11 @@ export default function EditorTab({
 
       <div className="lg:col-span-5">
         <div className="sticky top-24">
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 shadow-lg flex flex-col max-h-[60vh] md:max-h-[600px]">
-            <div className="p-3 border-b border-zinc-300 dark:border-zinc-700 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
-                <Terminal size={12} />
-                PREVIEW.MD
+          <div className={`bg-white dark:bg-zinc-900 border shadow-lg flex flex-col max-h-[60vh] md:max-h-[600px] transition-all ${theme.border}`}>
+            <div className={`p-3 flex items-center justify-between transition-colors ${theme.borderB} ${theme.bgHeader}`}>
+              <span className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 transition-colors ${theme.textHeader}`}>
+                <Terminal size={12} className={theme.textHeader} />
+                {theme.label}
               </span>
               <div className="flex items-center gap-2">
                 {editorMode === 'magic' && outputFormat && (
@@ -719,7 +793,7 @@ export default function EditorTab({
                 </div>
               </div>
             </div>
-            <div className="p-6 font-mono text-xs overflow-y-auto custom-scrollbar grow bg-zinc-50 dark:bg-black text-zinc-700 dark:text-zinc-400 leading-relaxed tracking-wide border-b border-zinc-300 dark:border-zinc-700">
+            <div className={`p-6 font-mono text-xs overflow-y-auto custom-scrollbar grow text-zinc-700 dark:text-zinc-400 leading-relaxed tracking-wide transition-colors ${theme.previewBg} ${theme.borderB}`}>
               <pre className="whitespace-pre-wrap">{getPreviewContent()}</pre>
             </div>
             <div className="p-3 bg-white dark:bg-zinc-900 shrink-0 flex gap-2">
@@ -728,13 +802,13 @@ export default function EditorTab({
                   const content = getPreviewContent();
                   const blob = new Blob([content], { type: 'text/markdown' });
                   const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a'); a.href = url; a.download = 'prompt.md'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                  const a = document.createElement('a'); a.href = url; a.download = theme.filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 }} 
                 className="p-3 border border-zinc-300 dark:border-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
                 <Download size={18} />
               </button>
-              <button onClick={handleSavePrompt} className="grow bg-industrial-600 dark:bg-acid-600 text-white dark:text-black text-xs font-bold px-4 py-3 flex items-center justify-center gap-2 hover:bg-industrial-500 dark:hover:bg-acid-500 transition-colors uppercase tracking-wider">
+              <button onClick={handleSavePrompt} className={`grow text-xs font-bold px-4 py-3 flex items-center justify-center gap-2 transition-colors uppercase tracking-wider ${theme.buttonPrimary}`}>
                 {copied ? <CheckCircle size={16}/> : <Save size={16} />} 
                 <span>{t('save_prompt')}</span>
               </button>

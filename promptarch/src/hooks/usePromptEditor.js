@@ -189,12 +189,133 @@ export const usePromptEditor = (token, lang) => {
     // Default: structured format (original)
     let output = '';
     if (targetTool === 'claude') {
-      output += `# SYSTEM INSTRUCTION (Optimized for Anthropic Claude)\n\n`;
+      if (selectedCategory === 'picture') {
+        output += `# IMAGE GENERATION PROMPT (Optimized for Anthropic Claude)\n\n`;
+        output += `Please follow the guidelines encapsulated within the XML tags below.\n\n`;
+        parts.forEach(p => {
+          const tag = p.title.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_');
+          output += `<${tag}>\n${p.content}\n</${tag}>\n\n`;
+        });
+        return output.trim();
+      }
+
+      output += `# CLAUDE.md - Developer Guidelines\n\n`;
       output += `Please follow the guidelines encapsulated within the XML tags below.\n\n`;
-      parts.forEach(p => {
-        const tag = p.title.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_');
-        output += `<${tag}>\n${p.content}\n</${tag}>\n\n`;
-      });
+
+      // 1. Context Tag
+      const hasContext = (outputSections.roleSection && role) || 
+                         (outputSections.taskSection && task) || 
+                         (outputSections.stackSection && Object.keys(techStack).some(k => techStack[k]));
+      
+      if (hasContext) {
+        output += `<project_context>\n`;
+        if (outputSections.roleSection && role) {
+          output += `- **Assistant Role**: ${role}\n`;
+        }
+        if (outputSections.taskSection && task) {
+          output += `- **Primary Objective**: ${task}\n`;
+        }
+        const stackList = Object.keys(techStack).filter(k => techStack[k]).map(k => k.replace(/_/g, ' ')).join(', ');
+        if (outputSections.stackSection && stackList) {
+          output += `- **${['engineering', 'fluid_mechanics', 'general'].includes(selectedCategory) ? 'Tools & Software' : 'Tech Stack'}**: ${stackList}\n`;
+        }
+        output += `</project_context>\n\n`;
+      }
+
+      // 2. Coding Guidelines Tag (Category adjusted)
+      if (outputSections.methodologySection) {
+        output += `<coding_guidelines>\n`;
+        
+        // Research-backed guidelines per category
+        if (selectedCategory === 'web') {
+          output += `- Use functional components with hooks for clean React state management.\n`;
+          output += `- Style interfaces utilizing utility-first Tailwind CSS classes.\n`;
+          output += `- Adhere to strict TypeScript safety (avoid using 'any' type, define clear interfaces/types).\n`;
+          output += `- Leverage semantic HTML elements for optimal accessibility (ARIA) and search layout.\n`;
+          output += `- Implement modular design; files should remain focused and single-purpose.\n`;
+          output += `- Do not write draft placeholders; generate complete code files where applicable.\n`;
+        } else if (selectedCategory === 'mobile') {
+          output += `- Structure widgets/views keeping state logic decoupled (BLoC, Riverpod, or Provider patterns).\n`;
+          output += `- Ensure screens are fully responsive across phone, tablet, and foldable devices.\n`;
+          output += `- Optimize animation frame rendering; dispose of controllers to prevent memory leaks.\n`;
+          output += `- Adhere to platform styles (Material Design guidelines for Android, HIG for iOS).\n`;
+          output += `- Handle native platform dependencies cleanly within gradle/cocoapod setups.\n`;
+        } else if (selectedCategory === 'windows') {
+          output += `- Organize backend logic decoupling UI from data models using WPF/WinForms MVVM pattern.\n`;
+          output += `- Execute resource-intensive I/O or network API tasks asynchronously using async/await.\n`;
+          output += `- Follow strict C# PascalCase naming conventions and clean namespace imports.\n`;
+          output += `- Manage system resources properly; implement IDisposable for unmanaged objects.\n`;
+        } else if (selectedCategory === 'engineering') {
+          output += `- Explicitly state all mathematical models, simplifying assumptions, and SI units first.\n`;
+          output += `- Compile parametric comparisons in markdown tables to evaluate model variants.\n`;
+          output += `- Verify numerical stability and dimensional consistency in calculating steps.\n`;
+          output += `- Write clean, documented calculation scripts (Python/MATLAB) with comments.\n`;
+        } else if (selectedCategory === 'fluid_mechanics') {
+          output += `- Identify fluid flow regime (laminar, transitional, turbulent) utilizing Reynolds number.\n`;
+          output += `- Detail physical boundary conditions (inlets, outlets, walls, symmetry) explicitly.\n`;
+          output += `- Suggest suitable CFD mesh configurations and solver settings (e.g. SIMPLE, PISO).\n`;
+          output += `- Simplify Navier-Stokes equations systematically and show step-by-step analytical derivation.\n`;
+        } else if (selectedCategory === 'general') {
+          output += `- Provide a concise executive summary before presenting detailed analysis.\n`;
+          output += `- Distinguish clearly between verified facts, theoretical models, and assumptions.\n`;
+          output += `- Present balanced viewpoints on controversial topics and list reference citations.\n`;
+          output += `- Conclude reports with a list of actionable key takeaways.\n`;
+        }
+        
+        // Append existing methodology parts if there are any
+        parts.forEach(p => {
+          if (['METHODOLOGY', 'FLUID MECHANICS SPECIFICS', 'RESEARCH APPROACH', 'OUTPUT FORMAT'].includes(p.title)) {
+            output += `\n**${p.title}**:\n${p.content.split('\n').map(line => line.startsWith('-') ? line : `- ${line}`).join('\n')}\n`;
+          }
+        });
+        
+        output += `</coding_guidelines>\n\n`;
+      }
+
+      // 3. Behavioral Constraints Tag
+      const hasBehavioral = outputSections.toneSection || (outputSections.rulesSection && customRules.length > 0);
+      if (hasBehavioral) {
+        output += `<behavioral_constraints>\n`;
+        if (outputSections.toneSection) {
+          output += `- **Response Tone**: ${tone}\n`;
+          output += `- **Writing Style**: ${style}\n`;
+          if (designFocus) {
+            output += `- **Design Focus**: ${designFocus}\n`;
+          }
+        }
+        if (outputSections.rulesSection && customRules.length > 0) {
+          output += `\n**Directives**:\n`;
+          customRules.forEach(rule => {
+            output += `- ${rule}\n`;
+          });
+        }
+        output += `</behavioral_constraints>\n\n`;
+      }
+
+      // 4. Security Standards Tag
+      const activeSecurityChecks = Object.keys(securityChecks).filter(k => securityChecks[k]);
+      if (outputSections.securitySection && activeSecurityChecks.length > 0) {
+        output += `<security_standards>\n`;
+        const securityLabels = getSecurityOptionsForCategory(selectedCategory);
+        activeSecurityChecks.forEach(k => {
+          const option = securityLabels.find(o => o.key === k);
+          const label = option ? option.label : k.replace(/([A-Z])/g, ' $1').trim();
+          output += `- Enforce security validation: ${label}\n`;
+        });
+        output += `</security_standards>\n\n`;
+      }
+
+      // 5. Capabilities Tag
+      const activeSkills = Object.keys(selectedSkills).filter(k => selectedSkills[k]);
+      if (outputSections.skillsSection && activeSkills.length > 0) {
+        output += `<capabilities>\n`;
+        activeSkills.forEach(k => {
+          const skill = SKILL_OPTIONS.find(s => s.key === k);
+          const label = skill ? `${skill.label} (${skill.desc})` : k;
+          output += `- Require agent capability: ${label}\n`;
+        });
+        output += `</capabilities>\n\n`;
+      }
     } else if (targetTool === 'gemini') {
       output += `# SYSTEM INSTRUCTION (Optimized for Google Gemini)\n`;
       parts.forEach(p => {
