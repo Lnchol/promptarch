@@ -370,27 +370,34 @@ export default function EditorTab({
               {/* CATEGORY SELECTION */}
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Category</label>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-                  {['web', 'mobile', 'windows', 'engineering', 'fluid_mechanics', 'general'].map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => handleCategoryChange(cat)}
-                      className={`p-3 border text-xs font-bold uppercase tracking-wider flex flex-col items-center gap-2 transition-all ${
-                        selectedCategory === cat 
-                          ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
-                          : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
-                      }`}
-                    >
-                      {cat === 'web' && <Globe size={18} />}
-                      {cat === 'mobile' && <Smartphone size={18} />}
-                      {cat === 'windows' && <Monitor size={18} />}
-                      {cat === 'picture' && <ImageIcon size={18} />}
-                      {cat === 'engineering' && <Wrench size={18} />}
-                      {cat === 'fluid_mechanics' && <Waves size={18} />}
-                      {cat === 'general' && <BookOpen size={18} />}
-                      {t(`categories.${cat}`) || cat}
-                    </button>
-                  ))}
+                <div className={`grid grid-cols-3 sm:grid-cols-4 ${editorState.targetTool === 'claude' ? 'md:grid-cols-7' : 'md:grid-cols-6'} gap-2`}>
+                  {(() => {
+                    const cats = ['web', 'mobile', 'windows', 'engineering', 'fluid_mechanics', 'general'];
+                    if (editorState.targetTool === 'claude') {
+                      cats.push('claude_md');
+                    }
+                    return cats.map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => handleCategoryChange(cat)}
+                        className={`p-3 border text-xs font-bold uppercase tracking-wider flex flex-col items-center gap-2 transition-all ${
+                          selectedCategory === cat 
+                            ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
+                            : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                        }`}
+                      >
+                        {cat === 'web' && <Globe size={18} />}
+                        {cat === 'mobile' && <Smartphone size={18} />}
+                        {cat === 'windows' && <Monitor size={18} />}
+                        {cat === 'picture' && <ImageIcon size={18} />}
+                        {cat === 'engineering' && <Wrench size={18} />}
+                        {cat === 'fluid_mechanics' && <Waves size={18} />}
+                        {cat === 'general' && <BookOpen size={18} />}
+                        {cat === 'claude_md' && <Code2 size={18} />}
+                        {t(`categories.${cat}`) || cat}
+                      </button>
+                    ));
+                  })()}
                 </div>
               </div>
 
@@ -563,7 +570,11 @@ export default function EditorTab({
               {selectedCategory !== 'picture' && (
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
-                    {['engineering', 'fluid_mechanics', 'general'].includes(selectedCategory) ? (t('tools_label') || 'Tools & Software') : 'Tech Stack'}
+                    {['engineering', 'fluid_mechanics', 'general'].includes(selectedCategory) 
+                      ? (t('tools_label') || 'Tools & Software') 
+                      : selectedCategory === 'claude_md' 
+                      ? 'Prompt Directives' 
+                      : 'Tech Stack'}
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     {(() => {
@@ -574,6 +585,7 @@ export default function EditorTab({
                       else if (selectedCategory === 'engineering') items = ['matlab', 'python_sci', 'latex', 'solidworks', 'autocad', 'excel_data'];
                       else if (selectedCategory === 'fluid_mechanics') items = ['ansys_fluent', 'openfoam', 'matlab', 'python_sci', 'latex', 'excel_data'];
                       else if (selectedCategory === 'general') items = ['python_sci', 'latex', 'google_scholar', 'jupyter', 'excel_data'];
+                      else if (selectedCategory === 'claude_md') items = ['skipFiller', 'codeDiffs', 'noExplanation', 'dryRunOnly'];
                       return items.map(tech => {
                         const iconLookup = {
                           react: Code2, tailwind: Palette, threejs: Box,
@@ -583,10 +595,15 @@ export default function EditorTab({
                           matlab: Terminal, python_sci: Code2, latex: FileText,
                           ansys_fluent: Waves, openfoam: Waves,
                           solidworks: Box, autocad: Box,
-                          google_scholar: BookOpen, jupyter: Code2, excel_data: Terminal
+                          google_scholar: BookOpen, jupyter: Code2, excel_data: Terminal,
+                          skipFiller: Eye, codeDiffs: Terminal, noExplanation: Lightbulb, dryRunOnly: TestTube
                         };
                         const Icon = iconLookup[tech] || Code2;
-                        const displayName = tech.replace(/_/g, ' ');
+                        const displayName = tech === 'skipFiller' ? 'Skip Filler' :
+                                            tech === 'codeDiffs' ? 'Target Diffs Only' :
+                                            tech === 'noExplanation' ? 'No Explanations' :
+                                            tech === 'dryRunOnly' ? 'Dry Run Plan' :
+                                            tech.replace(/_/g, ' ');
                         return (
                         <label key={tech} className="flex items-start gap-3 p-3 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer hover:border-industrial-500 dark:hover:border-acid-500 transition-colors group">
                           <div className={`w-5 h-5 mt-0.5 border flex items-center justify-center shrink-0 transition-colors ${techStack[tech] ? 'bg-industrial-500 dark:bg-acid-500 border-industrial-500 dark:border-acid-500' : 'border-zinc-400 dark:border-zinc-600 group-hover:border-industrial-500 dark:group-hover:border-acid-500'}`}>

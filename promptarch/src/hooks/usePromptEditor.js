@@ -71,7 +71,12 @@ export const usePromptEditor = (token, lang) => {
     nextjs: false, 
     vite: false, 
     vanilla_js: false, 
-    typescript: false 
+    typescript: false,
+    // Claude.md options
+    skipFiller: true,
+    codeDiffs: true,
+    noExplanation: false,
+    dryRunOnly: false
   });
   const [customRules, setCustomRules] = useState([]);
   const [magicInput, setMagicInput] = useState("");
@@ -83,7 +88,25 @@ export const usePromptEditor = (token, lang) => {
   const [editorMode, setEditorMode] = useState("magic"); // 'magic' or 'custom'
 
   // --- NEW: Target AI Tool Selector ---
-  const [targetTool, setTargetTool] = useState("claude"); // 'claude', 'gemini', 'chatgpt', 'cursor', 'copilot'
+  const [targetToolState, setTargetToolState] = useState("claude"); // 'claude', 'gemini', 'chatgpt', 'cursor', 'copilot'
+  const targetTool = targetToolState;
+  const setTargetTool = (tool) => {
+    setTargetToolState(tool);
+    if (tool !== 'claude' && selectedCategory === 'claude_md') {
+      setSelectedCategory('web');
+      setTechStack({
+        react: true, 
+        tailwind: true, 
+        threejs: false, 
+        nextjs: false, 
+        vite: false, 
+        vanilla_js: false, 
+        typescript: false
+      });
+      setTone('balanced');
+      setStyle('modern');
+    }
+  };
 
   // --- NEW: Security Checks ---
   const [securityChecks, setSecurityChecks] = useState({});
@@ -152,6 +175,12 @@ export const usePromptEditor = (token, lang) => {
       setTone('balanced'); setStyle('modern');
     } else if (category === 'picture') {
       setTone('creative'); setStyle('modern');
+    } else if (category === 'claude_md') {
+      newStack.skipFiller = true;
+      newStack.codeDiffs = true;
+      newStack.noExplanation = true;
+      newStack.dryRunOnly = false;
+      setTone('minimalist'); setStyle('modern');
     }
     setTechStack(newStack);
   };
@@ -196,6 +225,88 @@ export const usePromptEditor = (token, lang) => {
           const tag = p.title.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_');
           output += `<${tag}>\n${p.content}\n</${tag}>\n\n`;
         });
+        return output.trim();
+      }
+
+      if (selectedCategory === 'claude_md') {
+        output += `# CLAUDE.md - Token-Efficient Guidelines\n\n`;
+        output += `Please follow the guidelines encapsulated within the XML tags below for maximum token-efficiency and precision.\n\n`;
+
+        // 1. Context Tag
+        const hasContext = (outputSections.roleSection && role) || (outputSections.taskSection && task);
+        if (hasContext) {
+          output += `<project_context>\n`;
+          if (outputSections.roleSection && role) {
+            output += `- **Assistant Role**: ${role}\n`;
+          }
+          if (outputSections.taskSection && task) {
+            output += `- **Primary Objective**: ${task}\n`;
+          }
+          output += `</project_context>\n\n`;
+        }
+
+        // 2. Token-Efficiency Coding Guidelines Tag
+        if (outputSections.methodologySection) {
+          output += `<coding_guidelines>\n`;
+          output += `- Keep replies highly concise, focusing purely on direct modifications.\n`;
+          if (techStack.codeDiffs) {
+            output += `- Output ONLY target code blocks, diffs, or code fragments. Never rewrite full files or unchanged functions.\n`;
+          }
+          if (techStack.skipFiller) {
+            output += `- Omit greetings, conversational filler, summaries, and post-chat code descriptions.\n`;
+          }
+          if (techStack.noExplanation) {
+            output += `- Provide conceptual explanations only if explicitly requested by the user.\n`;
+          }
+          if (techStack.dryRunOnly) {
+            output += `- Draft a step-by-step verification plan inside a <thinking> tag before generating any code changes.\n`;
+          }
+          output += `- Avoid silent assumptions; ask for clarification on ambiguous constraints to prevent redundant code iterations.\n`;
+          output += `</coding_guidelines>\n\n`;
+        }
+
+        // 3. Behavioral Constraints Tag
+        const hasBehavioral = outputSections.toneSection || (outputSections.rulesSection && customRules.length > 0);
+        if (hasBehavioral) {
+          output += `<behavioral_constraints>\n`;
+          if (outputSections.toneSection) {
+            output += `- **Response Tone**: ${tone}\n`;
+            output += `- **Writing Style**: ${style}\n`;
+          }
+          if (outputSections.rulesSection && customRules.length > 0) {
+            output += `\n**Directives**:\n`;
+            customRules.forEach(rule => {
+              output += `- ${rule}\n`;
+            });
+          }
+          output += `</behavioral_constraints>\n\n`;
+        }
+
+        // 4. Security Standards Tag
+        const activeSecurityChecks = Object.keys(securityChecks).filter(k => securityChecks[k]);
+        if (outputSections.securitySection && activeSecurityChecks.length > 0) {
+          output += `<security_standards>\n`;
+          const securityLabels = getSecurityOptionsForCategory(selectedCategory);
+          activeSecurityChecks.forEach(k => {
+            const option = securityLabels.find(o => o.key === k);
+            const label = option ? option.label : k.replace(/([A-Z])/g, ' $1').trim();
+            output += `- Enforce validation check: ${label}\n`;
+          });
+          output += `</security_standards>\n\n`;
+        }
+
+        // 5. Capabilities Tag
+        const activeSkills = Object.keys(selectedSkills).filter(k => selectedSkills[k]);
+        if (outputSections.skillsSection && activeSkills.length > 0) {
+          output += `<capabilities>\n`;
+          activeSkills.forEach(k => {
+            const skill = SKILL_OPTIONS.find(s => s.key === k);
+            const label = skill ? `${skill.label} (${skill.desc})` : k;
+            output += `- Require agent capability: ${label}\n`;
+          });
+          output += `</capabilities>\n\n`;
+        }
+
         return output.trim();
       }
 

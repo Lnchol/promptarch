@@ -79,7 +79,11 @@ export const translations = {
       autocad: "2D/3D Drafting & Drawing",
       google_scholar: "Academic Paper Research",
       jupyter: "Interactive Notebooks & Analysis",
-      excel_data: "Data Analysis & Spreadsheets"
+      excel_data: "Data Analysis & Spreadsheets",
+      skipFiller: "Omit greeting & conversational filler",
+      codeDiffs: "Output code edits as targeted diffs",
+      noExplanation: "Explain code ONLY when requested",
+      dryRunOnly: "Formulate step-by-step verification plan"
     },
     categories: {
       web: "Website",
@@ -88,7 +92,8 @@ export const translations = {
       picture: "Picture Generation",
       engineering: "Engineering",
       fluid_mechanics: "Fluid Mechanics",
-      general: "General"
+      general: "General",
+      claude_md: "Claude.md"
     },
     custom_prompt_label: "Custom Prompt",
     custom_prompt_placeholder: "Paste or write your custom prompt here to share with the community...",
@@ -217,7 +222,11 @@ export const translations = {
       autocad: "2D/3D Çizim & Tasarım",
       google_scholar: "Akademik Makale Araştırması",
       jupyter: "İnteraktif Not Defterleri & Analiz",
-      excel_data: "Veri Analizi & Tablolama"
+      excel_data: "Veri Analizi & Tablolama",
+      skipFiller: "Selamlamaları ve konuşma dolgularını atla",
+      codeDiffs: "Kod değişikliklerini hedefli fark (diff) olarak çıktı ver",
+      noExplanation: "Kodu YALNIZCA istendiğinde açıkla",
+      dryRunOnly: "Adım adım doğrulama planı oluştur"
     },
     categories: {
       web: "Web Sitesi",
@@ -226,7 +235,8 @@ export const translations = {
       picture: "Resim Oluşturma",
       engineering: "Mühendislik",
       fluid_mechanics: "Akışkanlar Mekaniği",
-      general: "Genel"
+      general: "Genel",
+      claude_md: "Claude.md"
     },
     custom_prompt_label: "Özel Prompt",
     custom_prompt_placeholder: "Toplulukla paylaşmak için özel promptunuzu buraya yapıştırın veya yazın...",
