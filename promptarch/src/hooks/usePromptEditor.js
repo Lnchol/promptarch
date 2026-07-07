@@ -175,12 +175,6 @@ export const usePromptEditor = (token, lang) => {
     } else if (category === 'fluid_mechanics') {
       newStack.ansys_fluent = true; newStack.openfoam = true; newStack.matlab = true; newStack.python_sci = true; newStack.latex = true;
       setTone('technical'); setStyle('classic');
-    } else if (category === 'general') {
-      newStack.markdown = true;
-      newStack.stepByStep = true;
-      newStack.concise = false;
-      newStack.examples = true;
-      setTone('balanced'); setStyle('modern');
     } else if (category === 'picture') {
       setTone('creative'); setStyle('modern');
     } else if (category === 'claude_md') {
@@ -500,9 +494,8 @@ export const usePromptEditor = (token, lang) => {
     }
 
     // --- ALL OTHER CATEGORIES ---
-    const isGeneralCategory = selectedCategory === 'general';
     const isClaudeMdCategory = selectedCategory === 'claude_md';
-    const stackList = (isGeneralCategory || isClaudeMdCategory) 
+    const stackList = isClaudeMdCategory 
       ? '' 
       : Object.keys(techStack).filter(k => techStack[k]).map(k => k.replace(/_/g, ' ')).join(', ');
     const isTechCategory = ['web', 'mobile', 'windows'].includes(selectedCategory);
@@ -527,31 +520,7 @@ export const usePromptEditor = (token, lang) => {
     if (selectedCategory === 'fluid_mechanics' && outputSections.methodologySection) {
       parts.push({ title: 'FLUID MECHANICS SPECIFICS', content: '- Identify flow regime (laminar/turbulent) via Reynolds number.\n- Specify governing equations and simplifying assumptions.\n- For CFD: recommend mesh strategy, turbulence model, and solver settings.\n- For analytical: start from Navier-Stokes and simplify systematically.\n- Include boundary conditions and initial conditions.' });
     }
-    if (isGeneralCategory && outputSections.methodologySection) {
-      let methodologyLines = [];
-      if (techStack.stepByStep) {
-        methodologyLines.push('- Explain processes or logic step-by-step for absolute clarity.');
-      }
-      if (techStack.examples) {
-        methodologyLines.push('- Incorporate clear, practical code snippets or illustrative examples.');
-      }
-      if (methodologyLines.length > 0) {
-        parts.push({ title: 'METHODOLOGY & REASONING', content: methodologyLines.join('\n') });
-      }
 
-      let formatLines = [];
-      if (techStack.markdown) {
-        formatLines.push('- Format replies cleanly using Markdown layout (headers, lists, tables, and bold text).');
-      }
-      if (techStack.concise) {
-        formatLines.push('- Keep answers highly direct and brief. Avoid introductory greetings and summary chatter.');
-      } else {
-        formatLines.push('- Provide complete, detailed, and comprehensive explanations.');
-      }
-      if (formatLines.length > 0) {
-        parts.push({ title: 'OUTPUT FORMAT', content: formatLines.join('\n') });
-      }
-    }
 
     // Rules
     if (customRules.length > 0 && outputSections.rulesSection) {

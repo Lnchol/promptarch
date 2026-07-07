@@ -96,8 +96,7 @@ export const translations = {
       picture: "Picture Generation",
       engineering: "Engineering",
       fluid_mechanics: "Fluid Mechanics",
-      general: "Chat Prompt",
-      claude_md: "Claude.md"
+      claude_md: "Chat Prompt"
     },
     custom_prompt_label: "Custom Prompt",
     custom_prompt_placeholder: "Paste or write your custom prompt here to share with the community...",
@@ -243,8 +242,7 @@ export const translations = {
       picture: "Resim Oluşturma",
       engineering: "Mühendislik",
       fluid_mechanics: "Akışkanlar Mekaniği",
-      general: "Sohbet Promptu",
-      claude_md: "Claude.md"
+      claude_md: "Sohbet Promptu"
     },
     custom_prompt_label: "Özel Prompt",
     custom_prompt_placeholder: "Toplulukla paylaşmak için özel promptunuzu buraya yapıştırın veya yazın...",
