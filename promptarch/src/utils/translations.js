@@ -83,7 +83,11 @@ export const translations = {
       skipFiller: "Omit greeting & conversational filler",
       codeDiffs: "Output code edits as targeted diffs",
       noExplanation: "Explain code ONLY when requested",
-      dryRunOnly: "Formulate step-by-step verification plan"
+      dryRunOnly: "Formulate step-by-step verification plan",
+      markdown: "Format responses using clean Markdown structure",
+      stepByStep: "Break down answers into clear, step-by-step logic",
+      concise: "Keep responses brief and avoid unnecessary text",
+      examples: "Include concrete, practical code examples"
     },
     categories: {
       web: "Website",
@@ -92,7 +96,7 @@ export const translations = {
       picture: "Picture Generation",
       engineering: "Engineering",
       fluid_mechanics: "Fluid Mechanics",
-      general: "General",
+      general: "Chat Prompt",
       claude_md: "Claude.md"
     },
     custom_prompt_label: "Custom Prompt",
@@ -226,7 +230,11 @@ export const translations = {
       skipFiller: "Selamlamaları ve konuşma dolgularını atla",
       codeDiffs: "Kod değişikliklerini hedefli fark (diff) olarak çıktı ver",
       noExplanation: "Kodu YALNIZCA istendiğinde açıkla",
-      dryRunOnly: "Adım adım doğrulama planı oluştur"
+      dryRunOnly: "Adım adım doğrulama planı oluştur",
+      markdown: "Yanıtları temiz Markdown yapısı kullanarak biçimlendir",
+      stepByStep: "Cevapları net, adım adım mantıkla açıkla",
+      concise: "Yanıtları kısa tut ve gereksiz metinlerden kaçın",
+      examples: "Somut, pratik kod örnekleri ekle"
     },
     categories: {
       web: "Web Sitesi",
@@ -235,7 +243,7 @@ export const translations = {
       picture: "Resim Oluşturma",
       engineering: "Mühendislik",
       fluid_mechanics: "Akışkanlar Mekaniği",
-      general: "Genel",
+      general: "Sohbet Promptu",
       claude_md: "Claude.md"
     },
     custom_prompt_label: "Özel Prompt",

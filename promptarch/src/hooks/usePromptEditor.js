@@ -76,7 +76,12 @@ export const usePromptEditor = (token, lang) => {
     skipFiller: true,
     codeDiffs: true,
     noExplanation: false,
-    dryRunOnly: false
+    dryRunOnly: false,
+    // Chat Prompt options
+    markdown: true,
+    stepByStep: true,
+    concise: false,
+    examples: true
   });
   const [customRules, setCustomRules] = useState([]);
   const [magicInput, setMagicInput] = useState("");
@@ -171,7 +176,10 @@ export const usePromptEditor = (token, lang) => {
       newStack.ansys_fluent = true; newStack.openfoam = true; newStack.matlab = true; newStack.python_sci = true; newStack.latex = true;
       setTone('technical'); setStyle('classic');
     } else if (category === 'general') {
-      newStack.python_sci = true; newStack.latex = true; newStack.google_scholar = true; newStack.jupyter = true;
+      newStack.markdown = true;
+      newStack.stepByStep = true;
+      newStack.concise = false;
+      newStack.examples = true;
       setTone('balanced'); setStyle('modern');
     } else if (category === 'picture') {
       setTone('creative'); setStyle('modern');
@@ -492,10 +500,13 @@ export const usePromptEditor = (token, lang) => {
     }
 
     // --- ALL OTHER CATEGORIES ---
-    const stackList = Object.keys(techStack).filter(k => techStack[k]).map(k => k.replace(/_/g, ' ')).join(', ');
+    const isGeneralCategory = selectedCategory === 'general';
+    const isClaudeMdCategory = selectedCategory === 'claude_md';
+    const stackList = (isGeneralCategory || isClaudeMdCategory) 
+      ? '' 
+      : Object.keys(techStack).filter(k => techStack[k]).map(k => k.replace(/_/g, ' ')).join(', ');
     const isTechCategory = ['web', 'mobile', 'windows'].includes(selectedCategory);
     const isEngCategory = ['engineering', 'fluid_mechanics'].includes(selectedCategory);
-    const isGeneralCategory = selectedCategory === 'general';
 
     const parts = [];
 
@@ -517,8 +528,29 @@ export const usePromptEditor = (token, lang) => {
       parts.push({ title: 'FLUID MECHANICS SPECIFICS', content: '- Identify flow regime (laminar/turbulent) via Reynolds number.\n- Specify governing equations and simplifying assumptions.\n- For CFD: recommend mesh strategy, turbulence model, and solver settings.\n- For analytical: start from Navier-Stokes and simplify systematically.\n- Include boundary conditions and initial conditions.' });
     }
     if (isGeneralCategory && outputSections.methodologySection) {
-      parts.push({ title: 'RESEARCH APPROACH', content: '- Provide structured analysis with clear headings.\n- Distinguish between facts, theories, and speculation.\n- Include multiple perspectives on debated topics.\n- Cite sources and suggest further reading.' });
-      parts.push({ title: 'OUTPUT FORMAT', content: '- Executive summary first, then detailed breakdown.\n- Use bullet points, tables, and numbered lists for clarity.\n- Include a "Key Takeaways" section at the end.' });
+      let methodologyLines = [];
+      if (techStack.stepByStep) {
+        methodologyLines.push('- Explain processes or logic step-by-step for absolute clarity.');
+      }
+      if (techStack.examples) {
+        methodologyLines.push('- Incorporate clear, practical code snippets or illustrative examples.');
+      }
+      if (methodologyLines.length > 0) {
+        parts.push({ title: 'METHODOLOGY & REASONING', content: methodologyLines.join('\n') });
+      }
+
+      let formatLines = [];
+      if (techStack.markdown) {
+        formatLines.push('- Format replies cleanly using Markdown layout (headers, lists, tables, and bold text).');
+      }
+      if (techStack.concise) {
+        formatLines.push('- Keep answers highly direct and brief. Avoid introductory greetings and summary chatter.');
+      } else {
+        formatLines.push('- Provide complete, detailed, and comprehensive explanations.');
+      }
+      if (formatLines.length > 0) {
+        parts.push({ title: 'OUTPUT FORMAT', content: formatLines.join('\n') });
+      }
     }
 
     // Rules

@@ -570,9 +570,9 @@ export default function EditorTab({
               {selectedCategory !== 'picture' && (
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
-                    {['engineering', 'fluid_mechanics', 'general'].includes(selectedCategory) 
+                    {['engineering', 'fluid_mechanics'].includes(selectedCategory) 
                       ? (t('tools_label') || 'Tools & Software') 
-                      : selectedCategory === 'claude_md' 
+                      : ['claude_md', 'general'].includes(selectedCategory) 
                       ? 'Prompt Directives' 
                       : 'Tech Stack'}
                   </label>
@@ -584,7 +584,7 @@ export default function EditorTab({
                       else if (selectedCategory === 'windows') items = ['c_sharp', 'dot_net'];
                       else if (selectedCategory === 'engineering') items = ['matlab', 'python_sci', 'latex', 'solidworks', 'autocad', 'excel_data'];
                       else if (selectedCategory === 'fluid_mechanics') items = ['ansys_fluent', 'openfoam', 'matlab', 'python_sci', 'latex', 'excel_data'];
-                      else if (selectedCategory === 'general') items = ['python_sci', 'latex', 'google_scholar', 'jupyter', 'excel_data'];
+                      else if (selectedCategory === 'general') items = ['markdown', 'stepByStep', 'concise', 'examples'];
                       else if (selectedCategory === 'claude_md') items = ['skipFiller', 'codeDiffs', 'noExplanation', 'dryRunOnly'];
                       return items.map(tech => {
                         const iconLookup = {
@@ -596,13 +596,18 @@ export default function EditorTab({
                           ansys_fluent: Waves, openfoam: Waves,
                           solidworks: Box, autocad: Box,
                           google_scholar: BookOpen, jupyter: Code2, excel_data: Terminal,
-                          skipFiller: Eye, codeDiffs: Terminal, noExplanation: Lightbulb, dryRunOnly: TestTube
+                          skipFiller: Eye, codeDiffs: Terminal, noExplanation: Lightbulb, dryRunOnly: TestTube,
+                          markdown: FileText, stepByStep: Layers, concise: Zap, examples: Code2
                         };
                         const Icon = iconLookup[tech] || Code2;
                         const displayName = tech === 'skipFiller' ? 'Skip Filler' :
                                             tech === 'codeDiffs' ? 'Target Diffs Only' :
                                             tech === 'noExplanation' ? 'No Explanations' :
                                             tech === 'dryRunOnly' ? 'Dry Run Plan' :
+                                            tech === 'markdown' ? 'Markdown Format' :
+                                            tech === 'stepByStep' ? 'Step By Step' :
+                                            tech === 'concise' ? 'Concise Reply' :
+                                            tech === 'examples' ? 'Add Examples' :
                                             tech.replace(/_/g, ' ');
                         return (
                         <label key={tech} className="flex items-start gap-3 p-3 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer hover:border-industrial-500 dark:hover:border-acid-500 transition-colors group">
