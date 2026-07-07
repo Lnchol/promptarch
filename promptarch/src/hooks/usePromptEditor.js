@@ -272,8 +272,8 @@ export const usePromptEditor = (token, lang) => {
         if (hasBehavioral) {
           output += `<behavioral_constraints>\n`;
           if (outputSections.toneSection) {
-            output += `- **Response Tone**: ${tone}\n`;
-            output += `- **Writing Style**: ${style}\n`;
+            output += `- **Response Tone**: minimalist\n`;
+            output += `- **Writing Style**: modern\n`;
           }
           if (outputSections.rulesSection && customRules.length > 0) {
             output += `\n**Directives**:\n`;
@@ -368,11 +368,6 @@ export const usePromptEditor = (token, lang) => {
           output += `- Detail physical boundary conditions (inlets, outlets, walls, symmetry) explicitly.\n`;
           output += `- Suggest suitable CFD mesh configurations and solver settings (e.g. SIMPLE, PISO).\n`;
           output += `- Simplify Navier-Stokes equations systematically and show step-by-step analytical derivation.\n`;
-        } else if (selectedCategory === 'general') {
-          output += `- Provide a concise executive summary before presenting detailed analysis.\n`;
-          output += `- Distinguish clearly between verified facts, theoretical models, and assumptions.\n`;
-          output += `- Present balanced viewpoints on controversial topics and list reference citations.\n`;
-          output += `- Conclude reports with a list of actionable key takeaways.\n`;
         }
         
         // Append existing methodology parts if there are any
