@@ -4,7 +4,14 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Import Firebase Admin and Iyzico
 import { db, auth } from './firebase.js';
@@ -234,11 +241,111 @@ app.patch('/api/prompts/:id/share', authenticateToken, async (req, res) => {
   }
 });
 
+// Smart local fallback generator for when Gemini API key is invalid/fails
+function generateSmartFallback(promptText, schema) {
+  const prompt = (promptText || '').toLowerCase();
+  
+  // Default values
+  let role = "Expert Software Engineer";
+  let task = "Build a high-performance application with clean architecture and modern practices.";
+  let focus = "Clean Code, Performance, and Security";
+  let tone = "balanced";
+  let style = "modern";
+  let rules = [
+    "Write modular, reusable, and self-documenting code.",
+    "Follow industry-standard design patterns.",
+    "Avoid unnecessary external dependencies."
+  ];
+  let skills = ["codeGeneration", "architecture", "debugging"];
+  let stack = {};
+
+  // Detect category/stack from prompt
+  if (prompt.includes('web') || prompt.includes('react') || prompt.includes('html') || prompt.includes('website') || prompt.includes('site')) {
+    role = "Expert Website Developer";
+    task = "Develop a responsive, visually stunning website using modern layout and CSS/JS standards.";
+    focus = "Responsive UI, smooth micro-interactions, and visual excellence.";
+    stack = { react: true, tailwind: true };
+    rules.push("Ensure full mobile responsiveness.", "Use modern styling methods (Tailwind or CSS modules).");
+  } else if (prompt.includes('mobile') || prompt.includes('ios') || prompt.includes('android') || prompt.includes('flutter')) {
+    role = "Senior Mobile App Developer";
+    task = "Design and build a cross-platform mobile application with fluid navigation and native-like feel.";
+    focus = "Smooth animations, offline support, and touch optimization.";
+    stack = { flutter: true };
+    rules.push("Optimize touch hit targets.", "Implement proper state management.");
+  } else if (prompt.includes('game') || prompt.includes('3d') || prompt.includes('threejs')) {
+    role = "3D Creative Web Developer";
+    task = "Create an immersive, interactive 3D web experience with WebGL and smooth physics.";
+    focus = "Framerate optimization (60 FPS), realistic lighting, and premium shaders.";
+    stack = { react: true, threejs: true };
+    rules.push("Optimize WebGL render cycles to avoid memory leaks.", "Use requestAnimationFrame for smooth animations.");
+  } else if (prompt.includes('engineering') || prompt.includes('simulation') || prompt.includes('matlab') || prompt.includes('fluent')) {
+    role = "Computational Science & Engineering Specialist";
+    task = "Analyze and solve complex engineering problems using numerical simulations and math modeling.";
+    focus = "Precision, boundary conditions, and code efficiency.";
+    stack = { matlab: true, python_sci: true };
+    rules.push("Document all mathematical formulations in LaTeX.", "State all modeling assumptions explicitly.");
+  }
+
+  // Populate dynamic rules based on keywords
+  if (prompt.includes('auth') || prompt.includes('secure') || prompt.includes('login')) {
+    rules.push("Implement secure password hashing and JWT token expiration.", "Validate and sanitize all user inputs to prevent injection attacks.");
+  }
+  if (prompt.includes('database') || prompt.includes('sql') || prompt.includes('sqlite')) {
+    rules.push("Use prepared statements/ORMs to protect against SQL injections.", "Ensure database transactions are atomic and properly indexed.");
+  }
+
+  // Build schema matching output
+  const output = {};
+  if (schema && schema.properties) {
+    for (const key of Object.keys(schema.properties)) {
+      if (key === 'role') output.role = role;
+      else if (key === 'task') output.task = task;
+      else if (key === 'focus') output.focus = focus;
+      else if (key === 'tone') output.tone = tone;
+      else if (key === 'style') output.style = style;
+      else if (key === 'customRules') output.customRules = rules;
+      else if (key === 'suggestedSecurityChecks') {
+        const sec = [];
+        if (prompt.includes('auth') || prompt.includes('secure') || prompt.includes('login') || prompt.includes('web') || prompt.includes('react') || prompt.includes('site') || prompt.includes('website')) {
+          sec.push('inputValidation', 'xssProtection');
+        }
+        if (prompt.includes('database') || prompt.includes('sql')) {
+          sec.push('sqlInjection');
+        }
+        if (sec.length === 0) {
+          sec.push('inputValidation');
+        }
+        output.suggestedSecurityChecks = sec;
+      }
+      else if (key === 'suggestedSkills') {
+        output.suggestedSkills = skills;
+      }
+      else if (key === 'stack') {
+        output.stack = {};
+        if (schema.properties.stack && schema.properties.stack.properties) {
+          for (const sKey of Object.keys(schema.properties.stack.properties)) {
+            output.stack[sKey] = !!stack[sKey];
+          }
+        }
+      }
+    }
+  }
+
+  return output;
+}
+
 // --- AI GENERATION (Server-side - keeps API key secure) ---
 app.post('/api/generate', async (req, res) => {
   const { prompt, schema, language } = req.body;
   
-  if (!process.env.GEMINI_API_KEY) return res.status(503).json({ error: "Gemini API Key missing." });
+  if (!process.env.GEMINI_API_KEY) {
+    try {
+      const fallbackData = generateSmartFallback(prompt, schema);
+      return res.json(fallbackData);
+    } catch (fallbackError) {
+      return res.status(503).json({ error: "Gemini API Key missing and fallback failed." });
+    }
+  }
 
   try {
     const langInstruction = language ? `Respond in ${language} language.` : "";
@@ -260,7 +367,13 @@ app.post('/api/generate', async (req, res) => {
     res.json(JSON.parse(responseText));
   } catch (error) {
     console.error("Gemini Error:", error);
-    res.status(500).json({ error: "AI Generation Failed: " + error.message });
+    try {
+      const fallbackData = generateSmartFallback(prompt, schema);
+      res.json(fallbackData);
+    } catch (fallbackError) {
+      console.error("Fallback Error:", fallbackError);
+      res.status(500).json({ error: "AI Generation Failed: " + error.message });
+    }
   }
 });
 
@@ -492,6 +605,60 @@ app.post('/api/payments/cleanup-expired', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Serve static assets and handle routing for frontend
+const distPath = path.join(__dirname, '../dist');
+
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  
+  app.get('/{*splat}', (req, res, next) => {
+    // If it's an API route that didn't match any handlers, return 404
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    // Otherwise, serve index.html for SPA routing
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  // If dist doesn't exist, show a helpful message during development
+  app.get('/{*splat}', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    res.setHeader('Content-Type', 'text/html');
+    res.status(200).send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Prompt Architect Backend API</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0f0f11; color: #e4e4e7; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; text-align: center; }
+            .container { max-width: 600px; background: #18181b; padding: 40px; border-radius: 12px; border: 1px solid #27272a; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
+            h1 { color: #f4f4f5; margin-bottom: 16px; font-size: 24px; }
+            p { color: #a1a1aa; line-height: 1.6; margin-bottom: 24px; }
+            a { color: #6366f1; text-decoration: none; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.2s; }
+            a:hover { border-bottom-color: #6366f1; }
+            .badge { background: #27272a; color: #e4e4e7; padding: 6px 12px; border-radius: 9999px; font-size: 14px; font-weight: 500; display: inline-block; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="badge">API Server Running</div>
+            <h1>Cannot GET ${req.path}</h1>
+            <p>
+              This is the backend API server. If you want to access the application UI:
+            </p>
+            <p>
+              1. <strong>Local Development:</strong> Open <a href="http://localhost:5173" target="_blank">http://localhost:5173</a> (Vite Dev Server).<br/>
+              2. <strong>Production:</strong> Run <code>npm run build</code> to compile the frontend, then refresh this page.
+            </p>
+          </div>
+        </body>
+      </html>
+    `);
+  });
+}
 
 // Export app for Netlify Functions
 export { app };

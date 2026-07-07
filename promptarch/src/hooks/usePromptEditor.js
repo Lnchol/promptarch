@@ -1,29 +1,139 @@
 import { useState } from "react";
 
+// --- CONSTANTS ---
+
+const SECURITY_OPTIONS = {
+  tech: [
+    { key: 'inputValidation', label: 'Input Validation' },
+    { key: 'xssProtection', label: 'XSS Protection' },
+    { key: 'sqlInjection', label: 'SQL Injection Prevention' },
+    { key: 'csrfProtection', label: 'CSRF Protection' },
+    { key: 'authBestPractices', label: 'Auth Best Practices' },
+    { key: 'rateLimiting', label: 'Rate Limiting' },
+    { key: 'dataEncryption', label: 'Data Encryption' },
+    { key: 'errorHandling', label: 'Secure Error Handling' },
+    { key: 'cors', label: 'CORS Configuration' },
+    { key: 'csp', label: 'Content Security Policy' },
+  ],
+  engineering: [
+    { key: 'dataValidation', label: 'Data Validation' },
+    { key: 'unitVerification', label: 'Unit Verification' },
+    { key: 'assumptionGuarding', label: 'Assumption Guarding' },
+    { key: 'citationIntegrity', label: 'Citation Integrity' },
+    { key: 'numericalStability', label: 'Numerical Stability' },
+  ],
+  general: [
+    { key: 'factChecking', label: 'Fact Checking' },
+    { key: 'sourceVerification', label: 'Source Verification' },
+    { key: 'biasAwareness', label: 'Bias Awareness' },
+    { key: 'citationIntegrity', label: 'Citation Integrity' },
+  ],
+  picture: [
+    { key: 'contentSafety', label: 'Content Safety' },
+    { key: 'copyrightAwareness', label: 'Copyright Awareness' },
+  ],
+};
+
+const SKILL_OPTIONS = [
+  { key: 'codeGeneration', label: 'Code Generation', desc: 'Write new code, refactor, optimize' },
+  { key: 'debugging', label: 'Debugging', desc: 'Find and fix bugs, error analysis' },
+  { key: 'architecture', label: 'Architecture', desc: 'System design, patterns, scalability' },
+  { key: 'testing', label: 'Testing', desc: 'Unit tests, integration tests, TDD' },
+  { key: 'documentation', label: 'Documentation', desc: 'Comments, READMEs, API docs' },
+  { key: 'codeReview', label: 'Code Review', desc: 'Review, security audit, performance' },
+  { key: 'explanation', label: 'Explanation', desc: 'Teach concepts, explain code' },
+  { key: 'dataAnalysis', label: 'Data Analysis', desc: 'Data processing, visualization' },
+  { key: 'devops', label: 'DevOps', desc: 'CI/CD, deployment, infrastructure' },
+  { key: 'uiux', label: 'UI/UX', desc: 'Design systems, accessibility' },
+];
+
+// --- HELPER ---
+
+const getSecurityOptionsForCategory = (category) => {
+  if (['web', 'mobile', 'windows'].includes(category)) return SECURITY_OPTIONS.tech;
+  if (['engineering', 'fluid_mechanics'].includes(category)) return SECURITY_OPTIONS.engineering;
+  if (category === 'picture') return SECURITY_OPTIONS.picture;
+  return SECURITY_OPTIONS.general;
+};
+
+// --- HOOK ---
+
 export const usePromptEditor = (token, lang) => {
-  // ... state declarations ...
+  // --- Existing state ---
   const [selectedCategory, setSelectedCategory] = useState("web");
   const [role, setRole] = useState("");
   const [task, setTask] = useState("");
   const [designFocus, setDesignFocus] = useState("");
-  const [techStack, setTechStack] = useState({ react: true, tailwind: true, threejs: true });
+  const [techStack, setTechStack] = useState({ 
+    react: true, 
+    tailwind: true, 
+    threejs: false, 
+    nextjs: false, 
+    vite: false, 
+    vanilla_js: false, 
+    typescript: false 
+  });
   const [customRules, setCustomRules] = useState([]);
   const [magicInput, setMagicInput] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [customPrompt, setCustomPrompt] = useState("");
-  
-  // New States
   const [tone, setTone] = useState("balanced");
   const [style, setStyle] = useState("modern");
   const [editorMode, setEditorMode] = useState("magic"); // 'magic' or 'custom'
 
-  // ... handleCategoryChange and generatePromptContent ...
+  // --- NEW: Target AI Tool Selector ---
+  const [targetTool, setTargetTool] = useState("claude"); // 'claude', 'gemini', 'chatgpt', 'cursor', 'copilot'
+
+  // --- NEW: Security Checks ---
+  const [securityChecks, setSecurityChecks] = useState({});
+
+  const toggleSecurityCheck = (key) => {
+    setSecurityChecks(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // --- NEW: Output Format ---
+  const [outputFormat, setOutputFormat] = useState('structured'); // 'structured', 'conversational', 'checklist'
+  const [outputSections, setOutputSections] = useState({
+    roleSection: true,
+    taskSection: true,
+    stackSection: true,
+    toneSection: true,
+    methodologySection: true,
+    rulesSection: true,
+    securitySection: true,
+    skillsSection: true,
+  });
+
+  const toggleOutputSection = (key) => {
+    setOutputSections(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // --- NEW: Project Understanding ---
+  const [projectDescription, setProjectDescription] = useState('');
+  const [projectStructure, setProjectStructure] = useState('');
+  const [projectAnalysis, setProjectAnalysis] = useState(null);
+  const [isProjectAnalyzing, setIsProjectAnalyzing] = useState(false);
+
+  // --- NEW: Skills Selection ---
+  const [selectedSkills, setSelectedSkills] = useState({});
+
+  const toggleSkill = (key) => {
+    setSelectedSkills(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // --- Category change ---
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     const newStack = {};
     if (category === 'web') {
-      newStack.react = true; newStack.tailwind = true; newStack.threejs = true;
+      newStack.react = true; 
+      newStack.tailwind = true; 
+      newStack.threejs = false;
+      newStack.nextjs = false; 
+      newStack.vite = false; 
+      newStack.vanilla_js = false; 
+      newStack.typescript = false;
       setTone('balanced'); setStyle('modern');
     } else if (category === 'mobile') {
       newStack.flutter = true; newStack.swift = true; newStack.kotlin = true; newStack.objective_c = true;
@@ -46,107 +156,169 @@ export const usePromptEditor = (token, lang) => {
     setTechStack(newStack);
   };
 
-  const generatePromptContent = () => {
-    if (selectedCategory === 'picture') {
-      return `--- IMAGE GENERATION PROMPT ---
-### SUBJECT
-${task}
-
-### STYLE & MOOD
-${designFocus}
-- Tone: ${tone}
-- Style: ${style}
-
-### TECHNICAL DETAILS
-${role}
-
-### NEGATIVE PROMPT
-${customRules.join(', ')}`;
+  // --- Format output helper ---
+  const formatOutput = (parts, header) => {
+    if (outputFormat === 'conversational') {
+      let output = '';
+      parts.forEach(p => {
+        const title = p.title.toLowerCase().replace(/_/g, ' ');
+        const content = p.content.replace(/^- /gm, '').replace(/\n/g, ', ');
+        output += `Regarding ${title}: ${content}\n\n`;
+      });
+      return output.trim();
     }
 
+    if (outputFormat === 'checklist') {
+      let output = header + '\n\n';
+      let itemNum = 1;
+      parts.forEach(p => {
+        output += `${itemNum}. [${p.title}]\n`;
+        const lines = p.content.split('\n');
+        lines.forEach(line => {
+          const cleaned = line.replace(/^- /, '').trim();
+          if (cleaned) {
+            output += `   ${itemNum}.${lines.indexOf(line) + 1}. ${cleaned}\n`;
+          }
+        });
+        output += '\n';
+        itemNum++;
+      });
+      return output.trim();
+    }
+
+    // Default: structured format (original)
+    let output = '';
+    if (targetTool === 'claude') {
+      output += `# SYSTEM INSTRUCTION (Optimized for Anthropic Claude)\n\n`;
+      output += `Please follow the guidelines encapsulated within the XML tags below.\n\n`;
+      parts.forEach(p => {
+        const tag = p.title.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_');
+        output += `<${tag}>\n${p.content}\n</${tag}>\n\n`;
+      });
+    } else if (targetTool === 'gemini') {
+      output += `# SYSTEM INSTRUCTION (Optimized for Google Gemini)\n`;
+      parts.forEach(p => {
+        output += `\n## ${p.title}\n${p.content}\n`;
+      });
+    } else if (targetTool === 'chatgpt') {
+      output += `# CUSTOM INSTRUCTIONS (Optimized for OpenAI ChatGPT)\n\n`;
+      output += `## Profile & Role\n`;
+      const rolePart = parts.find(p => p.title === 'ROLE' || p.title === 'TECHNICAL DETAILS');
+      if (rolePart) output += `${rolePart.content}\n\n`;
+      
+      const stackPart = parts.find(p => p.title === 'TECH STACK' || p.title === 'TOOLS & SOFTWARE');
+      if (stackPart) output += `### Tech Stack & Tools\n${stackPart.content}\n\n`;
+      
+      output += `## Preferred Response Guidelines\n`;
+      parts.forEach(p => {
+        if (p.title !== 'ROLE' && p.title !== 'TECHNICAL DETAILS' && p.title !== 'TECH STACK' && p.title !== 'TOOLS & SOFTWARE') {
+          output += `### ${p.title}\n${p.content}\n\n`;
+        }
+      });
+    } else if (targetTool === 'cursor') {
+      output += `# .cursorrules (Optimized for Cursor IDE)\n\n`;
+      output += `You are an AI coding assistant integrated inside Cursor. Follow these instructions carefully:\n\n`;
+      parts.forEach(p => {
+        output += `## ${p.title}\n${p.content}\n\n`;
+      });
+    } else if (targetTool === 'copilot') {
+      output += `# .github/copilot-instructions.md (Optimized for GitHub Copilot)\n\n`;
+      parts.forEach(p => {
+        output += `## ${p.title}\n${p.content}\n\n`;
+      });
+    } else {
+      output += header + '\n';
+      parts.forEach(p => {
+        output += `\n### ${p.title}\n${p.content}\n`;
+      });
+    }
+    return output.trim();
+  };
+
+  // --- Generate prompt content ---
+  const generatePromptContent = () => {
+    // --- PICTURE CATEGORY (special format) ---
+    if (selectedCategory === 'picture') {
+      const parts = [];
+      if (outputSections.taskSection) parts.push({ title: 'SUBJECT', content: task });
+      parts.push({ title: 'STYLE & MOOD', content: `${designFocus}\n- Tone: ${tone}\n- Style: ${style}` });
+      if (outputSections.roleSection) parts.push({ title: 'TECHNICAL DETAILS', content: role });
+      if (customRules.length > 0 && outputSections.rulesSection) parts.push({ title: 'NEGATIVE PROMPT', content: customRules.join(', ') });
+
+      // Security for picture
+      const activePicSecurity = Object.keys(securityChecks).filter(k => securityChecks[k]);
+      if (activePicSecurity.length > 0 && outputSections.securitySection) {
+        const secLabels = getSecurityOptionsForCategory('picture');
+        const activeLabels = activePicSecurity.map(k => {
+          const opt = secLabels.find(o => o.key === k);
+          return opt ? `- ${opt.label}` : `- ${k}`;
+        });
+        parts.push({ title: 'CONTENT GUIDELINES', content: activeLabels.join('\n') });
+      }
+
+      return formatOutput(parts, '--- IMAGE GENERATION PROMPT ---');
+    }
+
+    // --- ALL OTHER CATEGORIES ---
     const stackList = Object.keys(techStack).filter(k => techStack[k]).map(k => k.replace(/_/g, ' ')).join(', ');
     const isTechCategory = ['web', 'mobile', 'windows'].includes(selectedCategory);
     const isEngCategory = ['engineering', 'fluid_mechanics'].includes(selectedCategory);
     const isGeneralCategory = selectedCategory === 'general';
 
-    let sections = `--- SYSTEM INSTRUCTION ---
-### ROLE
-${role}
+    const parts = [];
 
-### TASK
-${task}
-`;
-
-    // Tools / Stack section — shown for ALL categories that have them
-    if (stackList) {
-      sections += `
-### ${isTechCategory ? 'TECH STACK' : 'TOOLS & SOFTWARE'}
-${stackList}
-`;
+    if (outputSections.roleSection) parts.push({ title: 'ROLE', content: role });
+    if (outputSections.taskSection) parts.push({ title: 'TASK', content: task });
+    if (stackList && outputSections.stackSection) {
+      parts.push({ title: isTechCategory ? 'TECH STACK' : 'TOOLS & SOFTWARE', content: stackList });
+    }
+    if (outputSections.toneSection) {
+      parts.push({ title: 'TONE & STYLE', content: `- Tone: ${tone}\n- Style: ${style}${designFocus ? `\n- Focus: ${designFocus}` : ''}` });
     }
 
-    // Tone & Style
-    sections += `
-### TONE & STYLE
-- Tone: ${tone}
-- Style: ${style}${designFocus ? `\n- Focus: ${designFocus}` : ''}
-`;
-
-    // Category-specific enhancement sections
-    if (isEngCategory) {
-      sections += `
-### METHODOLOGY
-- State all assumptions explicitly before solving.
-- Show step-by-step derivations with equations.
-- Use SI units unless otherwise specified.
-- Cite relevant standards (ISO, ASME, DIN, Eurocode) where applicable.
-
-### OUTPUT FORMAT
-- Present calculations in structured steps.
-- Use tables for parametric comparisons.
-- Write equations in LaTeX notation when possible.
-- Include unit checks and dimensional analysis.
-- Provide diagrams descriptions where helpful.
-`;
+    // Category-specific methodology sections
+    if (isEngCategory && outputSections.methodologySection) {
+      parts.push({ title: 'METHODOLOGY', content: '- State all assumptions explicitly before solving.\n- Show step-by-step derivations with equations.\n- Use SI units unless otherwise specified.\n- Cite relevant standards (ISO, ASME, DIN, Eurocode) where applicable.' });
+      parts.push({ title: 'OUTPUT FORMAT', content: '- Present calculations in structured steps.\n- Use tables for parametric comparisons.\n- Write equations in LaTeX notation when possible.\n- Include unit checks and dimensional analysis.\n- Provide diagrams descriptions where helpful.' });
+    }
+    if (selectedCategory === 'fluid_mechanics' && outputSections.methodologySection) {
+      parts.push({ title: 'FLUID MECHANICS SPECIFICS', content: '- Identify flow regime (laminar/turbulent) via Reynolds number.\n- Specify governing equations and simplifying assumptions.\n- For CFD: recommend mesh strategy, turbulence model, and solver settings.\n- For analytical: start from Navier-Stokes and simplify systematically.\n- Include boundary conditions and initial conditions.' });
+    }
+    if (isGeneralCategory && outputSections.methodologySection) {
+      parts.push({ title: 'RESEARCH APPROACH', content: '- Provide structured analysis with clear headings.\n- Distinguish between facts, theories, and speculation.\n- Include multiple perspectives on debated topics.\n- Cite sources and suggest further reading.' });
+      parts.push({ title: 'OUTPUT FORMAT', content: '- Executive summary first, then detailed breakdown.\n- Use bullet points, tables, and numbered lists for clarity.\n- Include a "Key Takeaways" section at the end.' });
     }
 
-    if (selectedCategory === 'fluid_mechanics') {
-      sections += `
-### FLUID MECHANICS SPECIFICS
-- Identify flow regime (laminar/turbulent) via Reynolds number.
-- Specify governing equations and simplifying assumptions.
-- For CFD: recommend mesh strategy, turbulence model, and solver settings.
-- For analytical: start from Navier-Stokes and simplify systematically.
-- Include boundary conditions and initial conditions.
-`;
+    // Rules
+    if (customRules.length > 0 && outputSections.rulesSection) {
+      parts.push({ title: 'RULES', content: customRules.join('\n') });
     }
 
-    if (isGeneralCategory) {
-      sections += `
-### RESEARCH APPROACH
-- Provide structured analysis with clear headings.
-- Distinguish between facts, theories, and speculation.
-- Include multiple perspectives on debated topics.
-- Cite sources and suggest further reading.
-
-### OUTPUT FORMAT
-- Executive summary first, then detailed breakdown.
-- Use bullet points, tables, and numbered lists for clarity.
-- Include a "Key Takeaways" section at the end.
-`;
+    // Security
+    const activeSecurityChecks = Object.keys(securityChecks).filter(k => securityChecks[k]);
+    if (activeSecurityChecks.length > 0 && outputSections.securitySection) {
+      const securityLabels = getSecurityOptionsForCategory(selectedCategory);
+      const activeLabels = activeSecurityChecks.map(k => {
+        const option = securityLabels.find(o => o.key === k);
+        return option ? `- ${option.label}` : `- ${k.replace(/([A-Z])/g, ' $1').trim()}`;
+      });
+      parts.push({ title: 'SECURITY & VALIDATION', content: activeLabels.join('\n') });
     }
 
-    // Rules section
-    if (customRules.length > 0) {
-      sections += `
-### RULES
-${customRules.join('\n')}`;
+    // Skills
+    const activeSkills = Object.keys(selectedSkills).filter(k => selectedSkills[k]);
+    if (activeSkills.length > 0 && outputSections.skillsSection) {
+      const skillLabels = activeSkills.map(k => {
+        const skill = SKILL_OPTIONS.find(s => s.key === k);
+        return skill ? `- ${skill.label}: ${skill.desc}` : `- ${k}`;
+      });
+      parts.push({ title: 'REQUIRED CAPABILITIES', content: skillLabels.join('\n') });
     }
 
-    return sections;
+    return formatOutput(parts, '--- SYSTEM INSTRUCTION ---');
   };
 
-  // Call server-side API instead of exposing API key in browser
+  // --- Call server-side API ---
   const callGemini = async (prompt, schema) => {
     try {
       const response = await fetch('/api/generate', {
@@ -154,12 +326,12 @@ ${customRules.join('\n')}`;
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, schema, language: lang })
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'AI generation failed');
       }
-      
+
       return await response.json();
     } catch (e) {
       console.error("AI Generation Error:", e);
@@ -168,28 +340,29 @@ ${customRules.join('\n')}`;
     }
   };
 
+  // --- Magic generate ---
   const handleMagicGenerate = async () => {
     if (!magicInput.trim()) return;
     setIsAiLoading(true);
-    const schema = { 
-      type: "OBJECT", 
-      properties: { 
-        role: { type: "STRING" }, 
-        task: { type: "STRING" }, 
-        focus: { type: "STRING" }, 
+    const schema = {
+      type: "OBJECT",
+      properties: {
+        role: { type: "STRING" },
+        task: { type: "STRING" },
+        focus: { type: "STRING" },
         tone: { type: "STRING" },
         style: { type: "STRING" },
-        stack: { 
-          type: "OBJECT", 
-          properties: { 
-            threejs: { type: "BOOLEAN" }, 
-            tailwind: { type: "BOOLEAN" }, 
-            react: { type: "BOOLEAN" }, 
-            flutter: { type: "BOOLEAN" }, 
-            swift: { type: "BOOLEAN" }, 
-            kotlin: { type: "BOOLEAN" }, 
-            objective_c: { type: "BOOLEAN" }, 
-            c_sharp: { type: "BOOLEAN" }, 
+        stack: {
+          type: "OBJECT",
+          properties: {
+            threejs: { type: "BOOLEAN" },
+            tailwind: { type: "BOOLEAN" },
+            react: { type: "BOOLEAN" },
+            flutter: { type: "BOOLEAN" },
+            swift: { type: "BOOLEAN" },
+            kotlin: { type: "BOOLEAN" },
+            objective_c: { type: "BOOLEAN" },
+            c_sharp: { type: "BOOLEAN" },
             dot_net: { type: "BOOLEAN" },
             matlab: { type: "BOOLEAN" },
             python_sci: { type: "BOOLEAN" },
@@ -201,12 +374,14 @@ ${customRules.join('\n')}`;
             google_scholar: { type: "BOOLEAN" },
             jupyter: { type: "BOOLEAN" },
             excel_data: { type: "BOOLEAN" }
-          } 
-        }, 
-        customRules: { type: "ARRAY", items: { type: "STRING" } } 
-      } 
+          }
+        },
+        suggestedSecurityChecks: { type: "ARRAY", items: { type: "STRING" } },
+        suggestedSkills: { type: "ARRAY", items: { type: "STRING" } },
+        customRules: { type: "ARRAY", items: { type: "STRING" } }
+      }
     };
-    
+
     let context = "web design system";
     let defaultTone = "balanced";
     let defaultStyle = "modern";
@@ -217,22 +392,122 @@ ${customRules.join('\n')}`;
     else if (selectedCategory === 'fluid_mechanics') { context = "fluid mechanics and CFD simulation expert prompt"; defaultTone = "technical"; defaultStyle = "classic"; }
     else if (selectedCategory === 'general') { context = "general knowledge and analysis prompt"; }
 
-    const prompt = `Generate ${context} for: "${magicInput}". Pick a tone and style that best fits the domain (e.g. "technical" for engineering, "creative" for art, "professional" for business). Ensure the response fields (role, task, focus, tone, style) are tailored to this context.`;
+    const prompt = `Generate ${context} for: "${magicInput}". Pick a tone and style that best fits the domain (e.g. "technical" for engineering, "creative" for art, "professional" for business). Ensure the response fields (role, task, focus, tone, style, suggestedSecurityChecks, suggestedSkills) are tailored to this context. Select relevant security checks and capability skills.`;
     const result = await callGemini(prompt, schema);
-    
-    if (result) { 
-      setRole(result.role); 
-      setTask(result.task); 
-      setDesignFocus(result.focus); 
+
+    if (result) {
+      setRole(result.role);
+      setTask(result.task);
+      setDesignFocus(result.focus);
       setTone(result.tone || defaultTone);
       setStyle(result.style || defaultStyle);
-      setTechStack(prev => ({ ...prev, ...result.stack })); 
-      if (result.customRules) setCustomRules(result.customRules); 
+      setTechStack(prev => ({ ...prev, ...result.stack }));
+      if (result.customRules) setCustomRules(result.customRules);
+      
+      // Auto-apply suggested security checks
+      if (result.suggestedSecurityChecks) {
+        const checks = {};
+        result.suggestedSecurityChecks.forEach(k => { checks[k] = true; });
+        setSecurityChecks(checks);
+      } else {
+        setSecurityChecks({});
+      }
+
+      // Auto-apply suggested skills
+      if (result.suggestedSkills) {
+        const skills = {};
+        result.suggestedSkills.forEach(k => { skills[k] = true; });
+        setSelectedSkills(skills);
+      } else {
+        setSelectedSkills({});
+      }
     }
     setIsAiLoading(false);
   };
 
+  // --- NEW: Project Analysis ---
+  const handleProjectAnalyze = async () => {
+    if (!projectDescription.trim() && !projectStructure.trim()) return;
+    setIsProjectAnalyzing(true);
+
+    const schema = {
+      type: "OBJECT",
+      properties: {
+        detectedCategory: { type: "STRING" },
+        role: { type: "STRING" },
+        task: { type: "STRING" },
+        suggestedTone: { type: "STRING" },
+        suggestedStyle: { type: "STRING" },
+        suggestedStack: {
+          type: "OBJECT",
+          properties: {
+            threejs: { type: "BOOLEAN" }, tailwind: { type: "BOOLEAN" }, react: { type: "BOOLEAN" },
+            flutter: { type: "BOOLEAN" }, swift: { type: "BOOLEAN" }, kotlin: { type: "BOOLEAN" },
+            objective_c: { type: "BOOLEAN" }, c_sharp: { type: "BOOLEAN" }, dot_net: { type: "BOOLEAN" },
+            matlab: { type: "BOOLEAN" }, python_sci: { type: "BOOLEAN" }, latex: { type: "BOOLEAN" },
+            ansys_fluent: { type: "BOOLEAN" }, openfoam: { type: "BOOLEAN" }, solidworks: { type: "BOOLEAN" },
+            autocad: { type: "BOOLEAN" }, google_scholar: { type: "BOOLEAN" }, jupyter: { type: "BOOLEAN" },
+            excel_data: { type: "BOOLEAN" }
+          }
+        },
+        suggestedSecurityChecks: { type: "ARRAY", items: { type: "STRING" } },
+        suggestedSkills: { type: "ARRAY", items: { type: "STRING" } },
+        customRules: { type: "ARRAY", items: { type: "STRING" } },
+        projectSummary: { type: "STRING" }
+      }
+    };
+
+    let prompt = `Analyze this project and generate appropriate AI assistant configuration:\n\nProject Description: ${projectDescription}`;
+    if (projectStructure.trim()) {
+      prompt += `\n\nProject File Structure:\n${projectStructure}`;
+    }
+    prompt += `\n\nBased on this project, determine:\n1. The best category (web, mobile, windows, engineering, fluid_mechanics, general, picture)\n2. An appropriate role for the AI assistant\n3. A clear task description\n4. Suggested tone and style\n5. Required tech stack (set boolean true for needed tools)\n6. Security checks needed (from: inputValidation, xssProtection, sqlInjection, csrfProtection, authBestPractices, rateLimiting, dataEncryption, errorHandling, cors, csp, dataValidation, unitVerification, assumptionGuarding, citationIntegrity, numericalStability, factChecking, sourceVerification, biasAwareness, contentSafety, copyrightAwareness)\n7. Required AI skills (from: codeGeneration, debugging, architecture, testing, documentation, codeReview, explanation, dataAnalysis, devops, uiux)\n8. Custom rules specific to this project\n9. A brief project summary`;
+
+    const result = await callGemini(prompt, schema);
+
+    if (result) {
+      setProjectAnalysis(result);
+    }
+    setIsProjectAnalyzing(false);
+  };
+
+  const applyProjectAnalysis = () => {
+    if (!projectAnalysis) return;
+    const a = projectAnalysis;
+
+    // Apply category
+    if (a.detectedCategory) handleCategoryChange(a.detectedCategory);
+
+    // Apply basic fields
+    if (a.role) setRole(a.role);
+    if (a.task) setTask(a.task);
+    if (a.suggestedTone) setTone(a.suggestedTone);
+    if (a.suggestedStyle) setStyle(a.suggestedStyle);
+
+    // Apply stack
+    if (a.suggestedStack) setTechStack(prev => ({ ...prev, ...a.suggestedStack }));
+
+    // Apply security checks
+    if (a.suggestedSecurityChecks) {
+      const checks = {};
+      a.suggestedSecurityChecks.forEach(k => { checks[k] = true; });
+      setSecurityChecks(checks);
+    }
+
+    // Apply skills
+    if (a.suggestedSkills) {
+      const skills = {};
+      a.suggestedSkills.forEach(k => { skills[k] = true; });
+      setSelectedSkills(skills);
+    }
+
+    // Apply rules
+    if (a.customRules) setCustomRules(a.customRules);
+  };
+
+  // --- Return ---
   return {
+    // Existing
     selectedCategory, handleCategoryChange,
     role, setRole,
     task, setTask,
@@ -247,6 +522,25 @@ ${customRules.join('\n')}`;
     customPrompt, setCustomPrompt,
     editorMode, setEditorMode,
     generatePromptContent,
-    handleMagicGenerate
+    handleMagicGenerate,
+    // NEW: Target Tool Selector
+    targetTool, setTargetTool,
+    // NEW: Security
+    securityChecks, setSecurityChecks, toggleSecurityCheck,
+    getSecurityOptionsForCategory,
+    SECURITY_OPTIONS,
+    // NEW: Output format
+    outputFormat, setOutputFormat,
+    outputSections, toggleOutputSection,
+    // NEW: Project Understanding
+    projectDescription, setProjectDescription,
+    projectStructure, setProjectStructure,
+    projectAnalysis, setProjectAnalysis,
+    isProjectAnalyzing,
+    handleProjectAnalyze,
+    applyProjectAnalysis,
+    // NEW: Skills
+    selectedSkills, setSelectedSkills, toggleSkill,
+    SKILL_OPTIONS,
   };
 };
