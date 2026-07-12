@@ -241,6 +241,20 @@ app.patch('/api/prompts/:id/share', authenticateToken, async (req, res) => {
   }
 });
 
+// Helper to convert JSON schema types to lowercase for standard JSON schema compatibility
+function convertSchemaTypesToLowercase(schema) {
+  if (!schema || typeof schema !== 'object') return schema;
+  const result = Array.isArray(schema) ? [] : {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === 'type' && typeof value === 'string') {
+      result[key] = value.toLowerCase();
+    } else {
+      result[key] = convertSchemaTypesToLowercase(value);
+    }
+  }
+  return result;
+}
+
 // Smart local fallback generator for when Gemini API key is invalid/fails
 function generateSmartFallback(promptText, schema) {
   const prompt = (promptText || '').toLowerCase();
@@ -366,12 +380,18 @@ app.post('/api/generate', async (req, res) => {
   }
 
   try {
-    const langInstruction = language ? `Respond in ${language} language.` : "";
+    const langInstruction = language ? `Respond in ${language} language. Ensure all string values in the JSON output are in the ${language} language.` : "";
+    
+    const generationConfig = {
+      responseMimeType: "application/json"
+    };
+    if (schema) {
+      generationConfig.responseSchema = convertSchemaTypesToLowercase(schema);
+    }
+
     const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt + ` \n\n${langInstruction}\nRespond strictly with valid JSON matching this schema: ` + JSON.stringify(schema) }] }],
-      generationConfig: {
-        responseMimeType: "application/json"
-      }
+      contents: [{ role: "user", parts: [{ text: prompt + (langInstruction ? `\n\n${langInstruction}` : "") }] }],
+      generationConfig
     });
     
     let responseText = result.response.text();
