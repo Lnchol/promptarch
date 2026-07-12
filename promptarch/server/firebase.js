@@ -37,5 +37,21 @@ if (serviceAccountPath) {
   }
 }
 
-export const db = admin.apps.length > 0 ? admin.firestore() : null;
-export const auth = admin.apps.length > 0 ? admin.auth() : null;
+let db = null;
+let auth = null;
+
+if (admin.apps.length > 0) {
+  try {
+    db = admin.firestore();
+  } catch (error) {
+    console.error("⚠️ Failed to initialize Firestore:", error.message);
+  }
+  
+  try {
+    auth = admin.auth();
+  } catch (error) {
+    console.error("⚠️ Failed to initialize Firebase Auth:", error.message);
+  }
+}
+
+export { db, auth };
