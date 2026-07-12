@@ -24,12 +24,18 @@ if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' |
 
 const app = initializeApp(firebaseConfig);
 
-// Initialize App Check with ReCAPTCHA Enterprise
-// You need to add your reCAPTCHA Enterprise site key from Google Cloud Console
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_SITE_KEY || 'YOUR_RECAPTCHA_ENTERPRISE_SITE_KEY'),
-  isTokenAutoRefreshEnabled: true
-});
+// Initialize App Check with ReCAPTCHA Enterprise only if a valid site key is provided
+const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+let appCheck = null;
+
+if (siteKey && siteKey !== 'YOUR_RECAPTCHA_ENTERPRISE_SITE_KEY') {
+  appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(siteKey),
+    isTokenAutoRefreshEnabled: true
+  });
+} else {
+  console.log("ℹ️ Firebase App Check skipped: No valid VITE_RECAPTCHA_SITE_KEY provided.");
+}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
