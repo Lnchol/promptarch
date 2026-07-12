@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import CookieConsent from './components/CookieConsent';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
-import AuthModal from './components/AuthModal';
-import SubscriptionModal from './components/SubscriptionModal';
 import EditorTab from './components/EditorTab';
-import CommunityTab from './components/CommunityTab';
-import AccountTab from './components/AccountTab';
-import LibraryTab from './components/LibraryTab';
+
+// Lazy-loaded components not required for initial paint
+const CookieConsent = lazy(() => import('./components/CookieConsent'));
+const AuthModal = lazy(() => import('./components/AuthModal'));
+const SubscriptionModal = lazy(() => import('./components/SubscriptionModal'));
+const CommunityTab = lazy(() => import('./components/CommunityTab'));
+const AccountTab = lazy(() => import('./components/AccountTab'));
+const LibraryTab = lazy(() => import('./components/LibraryTab'));
 
 import { useTheme } from './hooks/useTheme';
 import { useLanguage } from './hooks/useLanguage';
@@ -109,71 +111,79 @@ export default function PromptArchitect() {
           />
         )}
 
-        {activeTab === 'community' && (
-          <CommunityTab 
-            trending={trending} 
-            user={user} 
-            handleLike={handleLike} 
-            setShowSubModal={setShowSubModal} 
-            t={t}
-            setRole={editorState.setRole}
-            setTask={editorState.setTask}
-            setActiveTab={setActiveTab}
-          />
-        )}
+        <Suspense fallback={
+          <div className="flex items-center justify-center py-12">
+            <div className="w-8 h-8 border-4 border-zinc-200 border-t-zinc-900 dark:border-zinc-800 dark:border-t-zinc-400 rounded-full animate-spin"></div>
+          </div>
+        }>
+          {activeTab === 'community' && (
+            <CommunityTab 
+              trending={trending} 
+              user={user} 
+              handleLike={handleLike} 
+              setShowSubModal={setShowSubModal} 
+              t={t}
+              setRole={editorState.setRole}
+              setTask={editorState.setTask}
+              setActiveTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'library' && (
-          <LibraryTab 
-            t={t}
-            setActiveTab={setActiveTab}
-            loadPromptIntoEditor={(promptText) => {
-              editorState.setEditorMode('custom');
-              editorState.setCustomPrompt(promptText);
-            }}
-          />
-        )}
+          {activeTab === 'library' && (
+            <LibraryTab 
+              t={t}
+              setActiveTab={setActiveTab}
+              loadPromptIntoEditor={(promptText) => {
+                editorState.setEditorMode('custom');
+                editorState.setCustomPrompt(promptText);
+              }}
+            />
+          )}
 
-        {activeTab === 'account' && (
-          <AccountTab 
-            user={user} 
-            myPrompts={myPrompts} 
-            handleToggleShare={handleToggleShare} 
-            setShowAuthModal={setShowAuthModal} 
-            setShowSubModal={setShowSubModal} 
-            setAuthMode={setAuthMode} 
-            logout={logout} 
-            cancelSubscription={cancelSubscription}
-            t={t} 
-            setRole={editorState.setRole} 
-            setTask={editorState.setTask} 
-            setActiveTab={setActiveTab} 
-          />
-        )}
+          {activeTab === 'account' && (
+            <AccountTab 
+              user={user} 
+              myPrompts={myPrompts} 
+              handleToggleShare={handleToggleShare} 
+              setShowAuthModal={setShowAuthModal} 
+              setShowSubModal={setShowSubModal} 
+              setAuthMode={setAuthMode} 
+              logout={logout} 
+              cancelSubscription={cancelSubscription}
+              t={t} 
+              setRole={editorState.setRole} 
+              setTask={editorState.setTask} 
+              setActiveTab={setActiveTab} 
+            />
+          )}
+        </Suspense>
       </main>
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
 
-      <AuthModal 
-        show={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-        mode={authMode} 
-        setMode={setAuthMode} 
-        onLogin={login} 
-        onRegister={register}
-        onLoginAnonymously={loginAnonymously}
-        onLinkAccount={linkAccount}
-        isAnonymous={isAnonymous}
-        t={t} 
-      />
+      <Suspense fallback={null}>
+        <AuthModal 
+          show={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+          mode={authMode} 
+          setMode={setAuthMode} 
+          onLogin={login} 
+          onRegister={register}
+          onLoginAnonymously={loginAnonymously}
+          onLinkAccount={linkAccount}
+          isAnonymous={isAnonymous}
+          t={t} 
+        />
 
-      <SubscriptionModal 
-        show={showSubModal} 
-        onClose={() => setShowSubModal(false)} 
-        onSubscribe={handleSubscribe} 
-        t={t} 
-      />
+        <SubscriptionModal 
+          show={showSubModal} 
+          onClose={() => setShowSubModal(false)} 
+          onSubscribe={handleSubscribe} 
+          t={t} 
+        />
 
-      <CookieConsent />
+        <CookieConsent />
+      </Suspense>
     </div>
   );
 }
