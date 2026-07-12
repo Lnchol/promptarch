@@ -10,7 +10,7 @@ function CollapsibleSection({ title, icon: Icon, children, defaultOpen = false, 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full p-3 flex items-center justify-between bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
       >
-        <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+        <span className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest flex items-center gap-2">
           <Icon size={12} className="text-industrial-500 dark:text-acid-500" />
           {title}
           {badge && (
@@ -155,7 +155,7 @@ export default function EditorTab({
           border: 'border-zinc-300 dark:border-zinc-700',
           borderB: 'border-b border-zinc-300 dark:border-zinc-700',
           bgHeader: 'bg-zinc-50 dark:bg-zinc-900',
-          textHeader: 'text-zinc-500',
+          textHeader: 'text-zinc-600',
           buttonPrimary: 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black hover:bg-industrial-500 dark:hover:bg-acid-500',
           previewBg: 'bg-zinc-50 dark:bg-black',
           label: 'PREVIEW.MD',
@@ -172,7 +172,7 @@ export default function EditorTab({
         
         {/* MODE TOGGLE */}
         <div className="space-y-2">
-          <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
+          <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
             {t('editor_mode') || 'Editor Mode'}
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -181,7 +181,7 @@ export default function EditorTab({
               className={`p-4 border text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all ${
                 editorMode === 'magic' 
                   ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
-                  : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                  : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
               }`}
             >
               <Sparkles size={18} />
@@ -192,7 +192,7 @@ export default function EditorTab({
               className={`p-4 border text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all ${
                 editorMode === 'custom' 
                   ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
-                  : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                  : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
               }`}
             >
               <FileText size={18} />
@@ -224,13 +224,13 @@ export default function EditorTab({
                     console.error('Failed to read clipboard:', err);
                   }
                 }}
-                className="absolute top-2 right-2 p-2 bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                className="absolute top-2 right-2 p-2 bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-600 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                 title={t('paste_from_clipboard') || 'Paste from clipboard'}
               >
                 <ClipboardPaste size={14} />
               </button>
             </div>
-            <p className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono">
+            <p className="text-[10px] text-zinc-600 dark:text-zinc-400 font-mono">
               {t('custom_prompt_hint') || 'Share prompts you\'ve created elsewhere with the community'}
             </p>
           </div>
@@ -245,12 +245,12 @@ export default function EditorTab({
               icon={Scan}
               defaultOpen={false}
             >
-              <p className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono mb-3">
+              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 font-mono mb-3">
                 {t('project_understanding_hint') || 'Describe your project or paste your file structure. AI will auto-detect everything.'}
               </p>
               <div className="space-y-3">
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-1 block">
+                  <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest mb-1 block">
                     {t('project_description_label') || 'Project Description'}
                   </label>
                   <textarea
@@ -261,7 +261,7 @@ export default function EditorTab({
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-1 flex items-center gap-2">
+                  <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest mb-1 flex items-center gap-2">
                     <FolderTree size={10} />
                     {t('project_structure_label') || 'File / Folder Structure (Optional)'}
                   </label>
@@ -298,25 +298,25 @@ export default function EditorTab({
                     <div className="grid grid-cols-2 gap-2 text-[10px]">
                       {projectAnalysis.detectedCategory && (
                         <div className="bg-white dark:bg-zinc-800 p-2 border border-zinc-200 dark:border-zinc-700">
-                          <span className="text-zinc-500 uppercase">Category:</span>
+                          <span className="text-zinc-600 uppercase">Category:</span>
                           <span className="ml-1 font-bold text-zinc-800 dark:text-zinc-200">{projectAnalysis.detectedCategory}</span>
                         </div>
                       )}
                       {projectAnalysis.suggestedTone && (
                         <div className="bg-white dark:bg-zinc-800 p-2 border border-zinc-200 dark:border-zinc-700">
-                          <span className="text-zinc-500 uppercase">Tone:</span>
+                          <span className="text-zinc-600 uppercase">Tone:</span>
                           <span className="ml-1 font-bold text-zinc-800 dark:text-zinc-200">{projectAnalysis.suggestedTone}</span>
                         </div>
                       )}
                       {projectAnalysis.suggestedSkills && projectAnalysis.suggestedSkills.length > 0 && (
                         <div className="col-span-2 bg-white dark:bg-zinc-800 p-2 border border-zinc-200 dark:border-zinc-700">
-                          <span className="text-zinc-500 uppercase">Skills:</span>
+                          <span className="text-zinc-600 uppercase">Skills:</span>
                           <span className="ml-1 font-bold text-zinc-800 dark:text-zinc-200">{projectAnalysis.suggestedSkills.join(', ')}</span>
                         </div>
                       )}
                       {projectAnalysis.suggestedSecurityChecks && projectAnalysis.suggestedSecurityChecks.length > 0 && (
                         <div className="col-span-2 bg-white dark:bg-zinc-800 p-2 border border-zinc-200 dark:border-zinc-700">
-                          <span className="text-zinc-500 uppercase">Security:</span>
+                          <span className="text-zinc-600 uppercase">Security:</span>
                           <span className="ml-1 font-bold text-zinc-800 dark:text-zinc-200">{projectAnalysis.suggestedSecurityChecks.join(', ')}</span>
                         </div>
                       )}
@@ -357,6 +357,7 @@ export default function EditorTab({
                   <button 
                     onClick={handleMagicGenerate} 
                     disabled={isAiLoading} 
+                    aria-label="Magic generate prompt"
                     className="bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white px-4 border-l border-zinc-300 dark:border-zinc-700 hover:bg-industrial-500 dark:hover:bg-acid-500 hover:text-white dark:hover:text-black transition-colors disabled:opacity-50"
                   >
                     {isAiLoading ? <Loader2 size={18} className="animate-spin" /> : <Wand2 size={18} />}
@@ -369,7 +370,7 @@ export default function EditorTab({
             <div className="space-y-6">
               {/* CATEGORY SELECTION */}
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Category</label>
+                <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Category</label>
                 <div className={`grid grid-cols-3 sm:grid-cols-4 ${editorState.targetTool === 'claude' ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-2`}>
                   {(() => {
                     const cats = ['web', 'mobile', 'windows', 'engineering', 'fluid_mechanics'];
@@ -383,7 +384,7 @@ export default function EditorTab({
                         className={`p-3 border text-xs font-bold uppercase tracking-wider flex flex-col items-center gap-2 transition-all ${
                           selectedCategory === cat 
                             ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
-                            : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                            : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
                         }`}
                       >
                         {cat === 'web' && <Globe size={18} />}
@@ -404,7 +405,7 @@ export default function EditorTab({
               {/* TARGET AI ASSISTANT / TOOL */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest">
+                  <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">
                     {t('target_assistant') || 'Target AI Assistant'}
                   </label>
                   <span className="text-[9px] text-industrial-500 dark:text-acid-400 font-mono font-bold bg-industrial-100 dark:bg-acid-900/30 px-1.5 py-0.5 rounded-sm">
@@ -446,7 +447,7 @@ export default function EditorTab({
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] border-b border-zinc-200 dark:border-zinc-800 pb-3">
                     <div>
-                      <span className="text-zinc-500 block uppercase">Reasoning:</span>
+                      <span className="text-zinc-600 block uppercase">Reasoning:</span>
                       <span className="font-bold text-zinc-800 dark:text-zinc-200">
                         {editorState.targetTool === 'claude' && '★★★★★ (5/5)'}
                         {editorState.targetTool === 'gemini' && '★★★★★ (5/5)'}
@@ -456,7 +457,7 @@ export default function EditorTab({
                       </span>
                     </div>
                     <div>
-                      <span className="text-zinc-500 block uppercase">Context Limit:</span>
+                      <span className="text-zinc-600 block uppercase">Context Limit:</span>
                       <span className="font-bold text-zinc-800 dark:text-zinc-200">
                         {editorState.targetTool === 'claude' && '★★★★★ (1M)'}
                         {editorState.targetTool === 'gemini' && '★★★★★ (2M+)'}
@@ -466,7 +467,7 @@ export default function EditorTab({
                       </span>
                     </div>
                     <div>
-                      <span className="text-zinc-500 block uppercase">Aesthetics / UI:</span>
+                      <span className="text-zinc-600 block uppercase">Aesthetics / UI:</span>
                       <span className="font-bold text-zinc-800 dark:text-zinc-200">
                         {editorState.targetTool === 'claude' && '★★★★★ (Excellent)'}
                         {editorState.targetTool === 'gemini' && '★★★☆☆ (Moderate)'}
@@ -476,7 +477,7 @@ export default function EditorTab({
                       </span>
                     </div>
                     <div>
-                      <span className="text-zinc-500 block uppercase">IDE Integration:</span>
+                      <span className="text-zinc-600 block uppercase">IDE Integration:</span>
                       <span className="font-bold text-zinc-800 dark:text-zinc-200">
                         {editorState.targetTool === 'claude' && '★☆☆☆☆ (Web app)'}
                         {editorState.targetTool === 'gemini' && '★☆☆☆☆ (Web app)'}
@@ -509,7 +510,7 @@ export default function EditorTab({
 
               {/* TONE SELECTION */}
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Tone</label>
+                <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Tone</label>
                 <div className="grid grid-cols-5 gap-2">
                   {['balanced', 'professional', 'creative', 'technical', 'minimalist'].map(tOption => (
                     <button
@@ -518,7 +519,7 @@ export default function EditorTab({
                       className={`p-2 border text-[10px] font-bold uppercase tracking-wider transition-all ${
                         editorState.tone === tOption 
                           ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
-                          : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                          : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
                       }`}
                     >
                       {tOption}
@@ -529,7 +530,7 @@ export default function EditorTab({
 
               {/* STYLE SELECTION */}
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Style</label>
+                <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Style</label>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
                   {['modern', 'classic', 'cyberpunk', 'corporate', 'playful', 'futuristic'].map(sOption => (
                     <button
@@ -538,7 +539,7 @@ export default function EditorTab({
                       className={`p-2 border text-[10px] font-bold uppercase tracking-wider transition-all ${
                         editorState.style === sOption 
                           ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600' 
-                          : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                          : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
                       }`}
                     >
                       {sOption}
@@ -548,7 +549,7 @@ export default function EditorTab({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">{t('role_label')}</label>
+                <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">{t('role_label')}</label>
                 <textarea 
                   value={role} 
                   onChange={e => setRole(e.target.value)} 
@@ -557,7 +558,7 @@ export default function EditorTab({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">{t('task_label')}</label>
+                <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">{t('task_label')}</label>
                 <textarea 
                   value={task} 
                   onChange={e => setTask(e.target.value)} 
@@ -569,7 +570,7 @@ export default function EditorTab({
               {/* TOOL / TECH STACK (Hidden for Picture) */}
               {selectedCategory !== 'picture' && (
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
+                  <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">
                     {['engineering', 'fluid_mechanics'].includes(selectedCategory) 
                       ? (t('tools_label') || 'Tools & Software') 
                       : selectedCategory === 'claude_md' 
@@ -616,10 +617,10 @@ export default function EditorTab({
                           />
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2">
-                              <Icon size={14} className="text-zinc-400 dark:text-zinc-500" />
+                              <Icon size={14} className="text-zinc-400 dark:text-zinc-600" />
                               <span className="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">{displayName}</span>
                             </div>
-                            <span className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono mt-1 leading-tight">{t(`tech_descriptions.${tech}`) || ''}</span>
+                            <span className="text-[10px] text-zinc-600 dark:text-zinc-400 font-mono mt-1 leading-tight">{t(`tech_descriptions.${tech}`) || ''}</span>
                           </div>
                         </label>
                       )})
@@ -655,7 +656,7 @@ export default function EditorTab({
                         className="hidden"
                       />
                       <div className="flex items-center gap-2">
-                        <ShieldCheck size={12} className="text-zinc-400 dark:text-zinc-500" />
+                        <ShieldCheck size={12} className="text-zinc-400 dark:text-zinc-600" />
                         <span className="text-[10px] font-bold uppercase text-zinc-700 dark:text-zinc-300 tracking-wider">{option.label}</span>
                       </div>
                     </label>
@@ -670,7 +671,7 @@ export default function EditorTab({
                 defaultOpen={false}
                 badge={activeSkillCount > 0 ? activeSkillCount : null}
               >
-                <p className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono mb-2">
+                <p className="text-[10px] text-zinc-600 dark:text-zinc-400 font-mono mb-2">
                   {t('skills_hint') || 'Select the capabilities you need from the AI assistant.'}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -700,10 +701,10 @@ export default function EditorTab({
                         />
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
-                            <SkillIcon size={12} className={selectedSkills[skill.key] ? 'text-industrial-500 dark:text-acid-400' : 'text-zinc-400 dark:text-zinc-500'} />
+                            <SkillIcon size={12} className={selectedSkills[skill.key] ? 'text-industrial-500 dark:text-acid-400' : 'text-zinc-400 dark:text-zinc-600'} />
                             <span className="text-[10px] font-bold uppercase text-zinc-700 dark:text-zinc-300 tracking-wider">{skill.label}</span>
                           </div>
-                          <span className="text-[9px] text-zinc-500 dark:text-zinc-500 font-mono mt-1 leading-tight">{skill.desc}</span>
+                          <span className="text-[9px] text-zinc-600 dark:text-zinc-400 font-mono mt-1 leading-tight">{skill.desc}</span>
                         </div>
                       </label>
                     );
@@ -719,7 +720,7 @@ export default function EditorTab({
               >
                 {/* Format Selector */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest">
+                  <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">
                     {t('output_format') || 'Format'}
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -736,7 +737,7 @@ export default function EditorTab({
                           className={`p-2.5 border text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
                             outputFormat === fmt.key
                               ? 'bg-industrial-600 dark:bg-acid-600 text-white dark:text-black border-industrial-600 dark:border-acid-600'
-                              : 'bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
+                              : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-industrial-500 dark:hover:border-acid-500'
                           }`}
                         >
                           <FmtIcon size={12} />
@@ -749,7 +750,7 @@ export default function EditorTab({
 
                 {/* Section Toggles */}
                 <div className="space-y-2 mt-3">
-                  <label className="text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest">
+                  <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">
                     {t('included_sections') || 'Included Sections'}
                   </label>
                   <div className="grid grid-cols-2 gap-1.5">
@@ -798,7 +799,7 @@ export default function EditorTab({
               </span>
               <div className="flex items-center gap-2">
                 {editorMode === 'magic' && outputFormat && (
-                  <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500 uppercase">
+                  <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-600 uppercase">
                     {outputFormat}
                   </span>
                 )}
@@ -820,7 +821,8 @@ export default function EditorTab({
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a'); a.href = url; a.download = theme.filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 }} 
-                className="p-3 border border-zinc-300 dark:border-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                aria-label="Download prompt"
+                className="p-3 border border-zinc-300 dark:border-zinc-700 text-zinc-600 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
               >
                 <Download size={18} />
               </button>

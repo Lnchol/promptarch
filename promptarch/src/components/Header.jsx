@@ -27,7 +27,7 @@ export default function Header({ t, theme, toggleTheme, lang, setLang, activeTab
                   className={`uppercase text-xs font-bold px-4 py-1.5 transition-all flex items-center gap-2 ${
                     activeTab === tab 
                       ? 'bg-white dark:bg-zinc-800 text-industrial-600 dark:text-acid-400 border border-zinc-300 dark:border-zinc-700 shadow-sm' 
-                      : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-300'
                   }`}
                 >
                   {t(`nav_${tab}`) || tab}
@@ -40,7 +40,7 @@ export default function Header({ t, theme, toggleTheme, lang, setLang, activeTab
             <div className="relative">
               <button 
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="p-2 border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors flex items-center gap-2"
+                className="p-2 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors flex items-center gap-2"
               >
                 <Globe size={18} />
                 <span className="text-xs font-bold uppercase">{lang}</span>
@@ -63,7 +63,8 @@ export default function Header({ t, theme, toggleTheme, lang, setLang, activeTab
 
             <button 
               onClick={toggleTheme} 
-              className="p-2 border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+              aria-label="Toggle theme"
+              className="p-2 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
@@ -83,6 +84,7 @@ export default function Header({ t, theme, toggleTheme, lang, setLang, activeTab
           </div>
           <button 
             onClick={toggleTheme} 
+            aria-label="Toggle theme"
             className="p-2 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}

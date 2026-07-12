@@ -132,7 +132,7 @@ export default function LibraryTab({ t, setActiveTab, loadPromptIntoEditor }) {
                     }`}
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <div className={`p-2 rounded-sm ${isSelected ? 'bg-industrial-100 dark:bg-acid-900/30 text-industrial-600 dark:text-acid-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-industrial-500 dark:group-hover:text-acid-500 transition-colors'}`}>
+                      <div className={`p-2 rounded-sm ${isSelected ? 'bg-industrial-100 dark:bg-acid-900/30 text-industrial-600 dark:text-acid-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 group-hover:text-industrial-500 dark:group-hover:text-acid-500 transition-colors'}`}>
                         <IconComponent size={20} />
                       </div>
                       {prompt.difficulty && (
@@ -145,13 +145,13 @@ export default function LibraryTab({ t, setActiveTab, loadPromptIntoEditor }) {
                     <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-2 line-clamp-1 group-hover:text-industrial-600 dark:group-hover:text-acid-500 transition-colors">
                       {prompt.title}
                     </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-4 h-8">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4 h-8">
                       {prompt.description}
                     </p>
                     
                     <div className="flex flex-wrap gap-1.5 mt-auto">
                       {prompt.tags.slice(0, 3).map(tag => (
-                        <span key={tag} className="text-[10px] text-zinc-500 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5">
+                        <span key={tag} className="text-[10px] text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5">
                           #{tag}
                         </span>
                       ))}
@@ -163,7 +163,7 @@ export default function LibraryTab({ t, setActiveTab, loadPromptIntoEditor }) {
                 );
               })
             ) : (
-              <div className="col-span-full py-12 text-center text-zinc-500 dark:text-zinc-400 border border-dashed border-zinc-300 dark:border-zinc-700">
+              <div className="col-span-full py-12 text-center text-zinc-600 dark:text-zinc-400 border border-dashed border-zinc-300 dark:border-zinc-700">
                 <Search size={32} className="mx-auto mb-4 opacity-50" />
                 <p>{t('no_prompts_found') || "No prompt templates found matching your search."}</p>
               </div>
@@ -192,7 +192,7 @@ export default function LibraryTab({ t, setActiveTab, loadPromptIntoEditor }) {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleDownload(expandedPrompt)}
-                    className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors"
+                    className="p-2 text-zinc-600 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors"
                     title="Download Markdown"
                   >
                     <Download size={16} />
@@ -207,7 +207,7 @@ export default function LibraryTab({ t, setActiveTab, loadPromptIntoEditor }) {
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 {expandedPrompt.description}
               </p>
             </div>

@@ -80,7 +80,7 @@ export default function SubscriptionModal({ show, onClose, onSubscribe, t }) {
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-white uppercase tracking-widest">{t('monthly')}</h3>
                 <span className="text-xl font-bold text-zinc-900 dark:text-white">$12.99</span>
               </div>
-              <p className="text-xs text-zinc-500 font-mono">{t('billed_monthly')}</p>
+              <p className="text-xs text-zinc-600 font-mono">{t('billed_monthly')}</p>
             </div>
 
             {/* Yearly */}
@@ -90,9 +90,9 @@ export default function SubscriptionModal({ show, onClose, onSubscribe, t }) {
               </div>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-white uppercase tracking-widest">{t('yearly')}</h3>
-                <span className="text-xl font-bold text-zinc-900 dark:text-white">$8.99<span className="text-sm font-normal text-zinc-500">/mo</span></span>
+                <span className="text-xl font-bold text-zinc-900 dark:text-white">$8.99<span className="text-sm font-normal text-zinc-600">/mo</span></span>
               </div>
-              <p className="text-xs text-zinc-500 font-mono">{t('billed_yearly')}</p>
+              <p className="text-xs text-zinc-600 font-mono">{t('billed_yearly')}</p>
             </div>
           </div>
 
@@ -105,7 +105,7 @@ export default function SubscriptionModal({ show, onClose, onSubscribe, t }) {
               <button onClick={() => handleNativeSubscribe('google')} className="w-full bg-green-600 text-white py-3 font-bold uppercase tracking-widest text-xs hover:bg-green-700 transition-colors">
                 {t('sub_google')}
               </button>
-              <button onClick={handleRestorePurchases} className="w-full text-zinc-500 text-[10px] font-bold uppercase tracking-widest hover:text-zinc-900 dark:hover:text-zinc-300 mt-2">
+              <button onClick={handleRestorePurchases} className="w-full text-zinc-600 text-[10px] font-bold uppercase tracking-widest hover:text-zinc-900 dark:hover:text-zinc-300 mt-2">
                 {t('restore_purchases')}
               </button>
             </div>
@@ -113,7 +113,7 @@ export default function SubscriptionModal({ show, onClose, onSubscribe, t }) {
 
           <div className="mt-8 text-center">
             <p className="text-xs text-zinc-400 mb-4 font-mono">{t('test_mode')}</p>
-            <button onClick={() => setIsNative(!isNative)} className="text-[10px] text-zinc-300 hover:text-zinc-500 mb-4 block mx-auto uppercase tracking-widest">
+            <button onClick={() => setIsNative(!isNative)} className="text-[10px] text-zinc-300 hover:text-zinc-600 mb-4 block mx-auto uppercase tracking-widest">
               {isNative ? "Switch to Web Mode" : "Switch to Native Mode"}
             </button>
             <button onClick={onClose} className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
