@@ -10,12 +10,12 @@ async function listModels() {
   
   try {
     console.log("Fetching available models...");
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
-    console.log("Attempting generation with gemini-3.1-flash-lite...");
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    console.log("Attempting generation with gemini-2.5-flash...");
     const response = await model.generateContent("Test");
-    console.log("Success with gemini-3.1-flash-lite! Response:", response.response.text());
+    console.log("Success with gemini-2.5-flash! Response:", response.response.text());
   } catch (error) {
-    console.error("Error with gemini-3.1-flash-lite:", error.message);
+    console.error("Error with gemini-2.5-flash:", error.message);
   }
 }
 
