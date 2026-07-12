@@ -1,36 +1,41 @@
 import admin from "firebase-admin";
 import dotenv from 'dotenv';
-dotenv.config();
+import fs from 'fs';
+import pathModule from 'path';
+import { fileURLToPath } from 'url';
 
-// Initialize Firebase Admin
-// You must provide the path to your service account key JSON file in .env
-// OR provide the credentials as environment variables
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = pathModule.dirname(__filename);
+
+dotenv.config({ path: pathModule.resolve(__dirname, '../.env') });
+
 const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
 
 if (serviceAccountPath) {
-  import('fs').then(fs => {
-    import('path').then(pathModule => {
-      const serviceAccount = JSON.parse(fs.readFileSync(pathModule.resolve(process.cwd(), serviceAccountPath), 'utf8'));
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-      });
+  try {
+    const serviceAccount = JSON.parse(fs.readFileSync(pathModule.resolve(process.cwd(), serviceAccountPath), 'utf8'));
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
     });
+  } catch (error) {
+    console.error("Failed to load service account key:", error.message);
+  }
+} else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    }),
+    projectId: process.env.FIREBASE_PROJECT_ID
   });
 } else {
-  // Fallback: Try to use individual env vars (useful for deployment platforms)
-  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      }),
-      projectId: process.env.FIREBASE_PROJECT_ID
-    });
-  } else {
-    console.warn("⚠️ Firebase Admin not initialized: Missing credentials.");
+  try {
+    admin.initializeApp();
+  } catch (e) {
+    console.warn("⚠️ Firebase Admin not initialized: Missing credentials. Firestore and Auth services will be unavailable.");
   }
 }
 
-export const db = admin.firestore();
-export const auth = admin.auth();
+export const db = admin.apps.length > 0 ? admin.firestore() : null;
+export const auth = admin.apps.length > 0 ? admin.auth() : null;
