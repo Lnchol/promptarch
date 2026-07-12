@@ -255,6 +255,29 @@ function convertSchemaTypesToLowercase(schema) {
   return result;
 }
 
+// Helper to optimize large object schemas into flat string arrays for faster model output
+function optimizeSchemaForGemini(originalSchema) {
+  if (!originalSchema || (originalSchema.type !== 'OBJECT' && originalSchema.type !== 'object')) {
+    return originalSchema;
+  }
+  const schema = JSON.parse(JSON.stringify(originalSchema));
+  if (schema.properties) {
+    if (schema.properties.stack && (schema.properties.stack.type === 'OBJECT' || schema.properties.stack.type === 'object')) {
+      schema.properties.stack = {
+        type: 'ARRAY',
+        items: { type: 'STRING' }
+      };
+    }
+    if (schema.properties.suggestedStack && (schema.properties.suggestedStack.type === 'OBJECT' || schema.properties.suggestedStack.type === 'object')) {
+      schema.properties.suggestedStack = {
+        type: 'ARRAY',
+        items: { type: 'STRING' }
+      };
+    }
+  }
+  return schema;
+}
+
 // Smart local fallback generator for when Gemini API key is invalid/fails
 function generateSmartFallback(promptText, schema) {
   const prompt = (promptText || '').toLowerCase();
@@ -382,15 +405,28 @@ app.post('/api/generate', async (req, res) => {
   try {
     const langInstruction = language ? `Respond in ${language} language. Ensure all string values in the JSON output are in the ${language} language.` : "";
     
+    // Add prompt instructions for optimized array mapping if applicable
+    let optimizedPrompt = prompt;
+    if (schema && schema.properties) {
+      if (schema.properties.stack) {
+        optimizedPrompt += `\n\nFor the 'stack' property, output it as an array of strings representing the active technology tools. Choose ONLY from: threejs, tailwind, react, flutter, swift, kotlin, objective_c, c_sharp, dot_net, matlab, python_sci, latex, ansys_fluent, openfoam, solidworks, autocad, google_scholar, jupyter, excel_data.`;
+      }
+      if (schema.properties.suggestedStack) {
+        optimizedPrompt += `\n\nFor the 'suggestedStack' property, output it as an array of strings representing the active technology tools. Choose ONLY from: threejs, tailwind, react, flutter, swift, kotlin, objective_c, c_sharp, dot_net, matlab, python_sci, latex, ansys_fluent, openfoam, solidworks, autocad, google_scholar, jupyter, excel_data.`;
+      }
+    }
+
     const generationConfig = {
-      responseMimeType: "application/json"
+      responseMimeType: "application/json",
+      temperature: 0.2
     };
     if (schema) {
-      generationConfig.responseSchema = convertSchemaTypesToLowercase(schema);
+      const optimizedSchema = optimizeSchemaForGemini(schema);
+      generationConfig.responseSchema = convertSchemaTypesToLowercase(optimizedSchema);
     }
 
     const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt + (langInstruction ? `\n\n${langInstruction}` : "") }] }],
+      contents: [{ role: "user", parts: [{ text: optimizedPrompt + (langInstruction ? `\n\n${langInstruction}` : "") }] }],
       generationConfig
     });
     
@@ -402,7 +438,29 @@ app.post('/api/generate', async (req, res) => {
       responseText = jsonMatch[0];
     }
     
-    res.json(JSON.parse(responseText));
+    let resultJson = JSON.parse(responseText);
+
+    // Map optimized string arrays back to standard boolean objects expected by frontend
+    if (schema && schema.properties) {
+      if (schema.properties.stack && Array.isArray(resultJson.stack)) {
+        const formattedStack = {};
+        const originalProps = schema.properties.stack.properties || {};
+        for (const key of Object.keys(originalProps)) {
+          formattedStack[key] = resultJson.stack.includes(key);
+        }
+        resultJson.stack = formattedStack;
+      }
+      if (schema.properties.suggestedStack && Array.isArray(resultJson.suggestedStack)) {
+        const formattedStack = {};
+        const originalProps = schema.properties.suggestedStack.properties || {};
+        for (const key of Object.keys(originalProps)) {
+          formattedStack[key] = resultJson.suggestedStack.includes(key);
+        }
+        resultJson.suggestedStack = formattedStack;
+      }
+    }
+    
+    res.json(resultJson);
   } catch (error) {
     console.error("Gemini Error:", error);
     try {

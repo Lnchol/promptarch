@@ -5,7 +5,6 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@google/generative-ai", "firebase-admin", "iyzipay"]
-  timeout = 26
 
 [[redirects]]
   from = "/api/*"
