@@ -21,9 +21,21 @@ import { PaymentStates, calculateEndDate } from './PaymentStates.js';
 const app = express();
 const PORT = 3001;
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+// Initialize Gemini lazily to prevent startup crash if API key is missing
+let genAI = null;
+let model = null;
+
+function getGeminiModel() {
+  if (!model) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Gemini API Key is missing.");
+    }
+    genAI = new GoogleGenerativeAI(apiKey);
+    model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  }
+  return model;
+}
 
 // --- MIDDLEWARE ---
 app.use(helmet());
@@ -425,7 +437,8 @@ app.post('/api/generate', async (req, res) => {
       generationConfig.responseSchema = convertSchemaTypesToLowercase(optimizedSchema);
     }
 
-    const result = await model.generateContent({
+    const activeModel = getGeminiModel();
+    const result = await activeModel.generateContent({
       contents: [{ role: "user", parts: [{ text: optimizedPrompt + (langInstruction ? `\n\n${langInstruction}` : "") }] }],
       generationConfig
     });
