@@ -4,8 +4,14 @@ import fs from 'fs';
 import pathModule from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = pathModule.dirname(__filename);
+let __filename = '';
+try {
+  if (typeof import.meta !== 'undefined' && import.meta.url) {
+    __filename = fileURLToPath(import.meta.url);
+  }
+} catch (e) {}
+
+const __dirname = __filename ? pathModule.dirname(__filename) : (typeof __dirname !== 'undefined' ? __dirname : process.cwd());
 
 dotenv.config({ path: pathModule.resolve(__dirname, '../.env') });
 
