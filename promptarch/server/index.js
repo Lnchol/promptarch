@@ -23,18 +23,20 @@ const PORT = 3001;
 
 // Initialize Gemini lazily to prevent startup crash if API key is missing
 let genAI = null;
-let model = null;
 
-function getGeminiModel() {
-  if (!model) {
+function getGenAI() {
+  if (!genAI) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error("Gemini API Key is missing.");
     }
     genAI = new GoogleGenerativeAI(apiKey);
-    model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   }
-  return model;
+  return genAI;
+}
+
+function getGeminiModel() {
+  return getGenAI().getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
 }
 
 // --- MIDDLEWARE ---
@@ -327,6 +329,23 @@ function generateSmartFallback(promptText, schema) {
       "Minimize non-code conversational elements to save tokens.",
       "Verify all code edits before completing the instruction task."
     ];
+  } else if (prompt.includes('agent') || prompt.includes('bot') || prompt.includes('assistant')) {
+    role = "Expert AI Agent Architect";
+    task = "Design and build an autonomous, goal-oriented AI agent workflow with specific memory and tool execution capabilities.";
+    focus = "Autonomy, safety, tool calling reliability, and efficient loop execution.";
+    tone = "technical";
+    style = "minimalist";
+    stack = {
+      multiAgent: false,
+      memory: true,
+      tools: true,
+      webSearch: false
+    };
+    rules = [
+      "Define clean, typed tool execution contracts/schemas.",
+      "Implement self-correcting logic for failed tool invocations.",
+      "Isolate short-term memory (session) from long-term memory (databases)."
+    ];
   } else if (prompt.includes('web') || prompt.includes('react') || prompt.includes('html') || prompt.includes('website') || prompt.includes('site')) {
     role = "Expert Website Developer";
     task = "Develop a responsive, visually stunning website using modern layout and CSS/JS standards.";
@@ -420,11 +439,18 @@ app.post('/api/generate', async (req, res) => {
     // Add prompt instructions for optimized array mapping if applicable
     let optimizedPrompt = prompt;
     if (schema && schema.properties) {
-      if (schema.properties.stack) {
-        optimizedPrompt += `\n\nFor the 'stack' property, output it as an array of strings representing the active technology tools. Choose ONLY from: threejs, tailwind, react, flutter, swift, kotlin, objective_c, c_sharp, dot_net, matlab, python_sci, latex, ansys_fluent, openfoam, solidworks, autocad, google_scholar, jupyter, excel_data.`;
+      if (schema.properties.stack && schema.properties.stack.properties) {
+        const stackKeys = Object.keys(schema.properties.stack.properties).join(', ');
+        optimizedPrompt += `\n\nFor the 'stack' property, output it as an array of strings representing the active options. Choose ONLY from: ${stackKeys}.`;
+      } else if (schema.properties.stack) {
+        optimizedPrompt += `\n\nFor the 'stack' property, output it as an array of strings representing the active options.`;
       }
-      if (schema.properties.suggestedStack) {
-        optimizedPrompt += `\n\nFor the 'suggestedStack' property, output it as an array of strings representing the active technology tools. Choose ONLY from: threejs, tailwind, react, flutter, swift, kotlin, objective_c, c_sharp, dot_net, matlab, python_sci, latex, ansys_fluent, openfoam, solidworks, autocad, google_scholar, jupyter, excel_data.`;
+      
+      if (schema.properties.suggestedStack && schema.properties.suggestedStack.properties) {
+        const suggestedStackKeys = Object.keys(schema.properties.suggestedStack.properties).join(', ');
+        optimizedPrompt += `\n\nFor the 'suggestedStack' property, output it as an array of strings representing the active options. Choose ONLY from: ${suggestedStackKeys}.`;
+      } else if (schema.properties.suggestedStack) {
+        optimizedPrompt += `\n\nFor the 'suggestedStack' property, output it as an array of strings representing the active options.`;
       }
     }
 
@@ -437,11 +463,32 @@ app.post('/api/generate', async (req, res) => {
       generationConfig.responseSchema = convertSchemaTypesToLowercase(optimizedSchema);
     }
 
-    const activeModel = getGeminiModel();
-    const result = await activeModel.generateContent({
-      contents: [{ role: "user", parts: [{ text: optimizedPrompt + (langInstruction ? `\n\n${langInstruction}` : "") }] }],
-      generationConfig
-    });
+    const client = getGenAI();
+    const primaryModelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+    const modelsToTry = [primaryModelName, "gemini-2.5-flash", "gemini-3-flash-preview"];
+    
+    let result = null;
+    let generationError = null;
+    
+    for (const modelName of modelsToTry) {
+      try {
+        console.log(`Attempting generation with model: ${modelName}`);
+        const modelInstance = client.getGenerativeModel({ model: modelName });
+        result = await modelInstance.generateContent({
+          contents: [{ role: "user", parts: [{ text: optimizedPrompt + (langInstruction ? `\n\n${langInstruction}` : "") }] }],
+          generationConfig
+        });
+        console.log(`Success with model: ${modelName}`);
+        break;
+      } catch (err) {
+        console.warn(`Model ${modelName} failed:`, err.message);
+        generationError = err;
+      }
+    }
+    
+    if (!result) {
+      throw generationError || new Error("All models failed.");
+    }
     
     let responseText = result.response.text();
     

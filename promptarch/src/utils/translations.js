@@ -87,7 +87,11 @@ export const translations = {
       markdown: "Format responses using clean Markdown structure",
       stepByStep: "Break down answers into clear, step-by-step logic",
       concise: "Keep responses brief and avoid unnecessary text",
-      examples: "Include concrete, practical code examples"
+      examples: "Include concrete, practical code examples",
+      multiAgent: "Support collaborative multi-agent workflows",
+      memory: "Enable long-term agent state and memory retention",
+      tools: "Integrate custom tool-calling and function execution",
+      webSearch: "Access real-time web search and live data browsing"
     },
     categories: {
       web: "Website",
@@ -96,7 +100,8 @@ export const translations = {
       picture: "Picture Generation",
       engineering: "Engineering",
       fluid_mechanics: "Fluid Mechanics",
-      claude_md: "Chat Prompt"
+      claude_md: "Chat Prompt",
+      agent: "AI Agent"
     },
     custom_prompt_label: "Custom Prompt",
     custom_prompt_placeholder: "Paste or write your custom prompt here to share with the community...",
@@ -233,7 +238,11 @@ export const translations = {
       markdown: "Yanıtları temiz Markdown yapısı kullanarak biçimlendir",
       stepByStep: "Cevapları net, adım adım mantıkla açıkla",
       concise: "Yanıtları kısa tut ve gereksiz metinlerden kaçın",
-      examples: "Somut, pratik kod örnekleri ekle"
+      examples: "Somut, pratik kod örnekleri ekle",
+      multiAgent: "Çoklu ajan işbirlikçi iş akışlarını destekle",
+      memory: "Uzun vadeli ajan durumu ve bellek tutmayı etkinleştir",
+      tools: "Özel araç çağırma ve fonksiyon yürütmeyi entegre et",
+      webSearch: "Gerçek zamanlı web arama ve canlı veri taramaya eriş"
     },
     categories: {
       web: "Web Sitesi",
@@ -242,7 +251,8 @@ export const translations = {
       picture: "Resim Oluşturma",
       engineering: "Mühendislik",
       fluid_mechanics: "Akışkanlar Mekaniği",
-      claude_md: "Sohbet Promptu"
+      claude_md: "Sohbet Promptu",
+      agent: "Yapay Zeka Ajanı"
     },
     custom_prompt_label: "Özel Prompt",
     custom_prompt_placeholder: "Toplulukla paylaşmak için özel promptunuzu buraya yapıştırın veya yazın...",
@@ -347,13 +357,18 @@ export const translations = {
       kotlin: "Beste für Android-Apps",
       objective_c: "Für alte iPhone-Apps",
       c_sharp: "Beste für Windows-Apps",
-      dot_net: "Beste für Unternehmen"
+      dot_net: "Beste für Unternehmen",
+      multiAgent: "Kollaborative Multi-Agenten-Workflows unterstützen",
+      memory: "Langfristigen Agentenstatus und Gedächtniserhalt aktivieren",
+      tools: "Benutzerdefinierten Tool-Aufruf und Funktionsausführung integrieren",
+      webSearch: "Echtzeit-Websuche und Live-Daten-Browsing nutzen"
     },
     categories: {
       web: "Web-App",
       mobile: "Mobile App",
       windows: "Windows-App",
-      picture: "Bildgenerierung"
+      picture: "Bildgenerierung",
+      agent: "KI-Agent"
     },
     custom_prompt_label: "Eigener Prompt",
     custom_prompt_placeholder: "Fügen Sie Ihren eigenen Prompt hier ein oder schreiben Sie ihn, um ihn mit der Community zu teilen...",
@@ -424,13 +439,18 @@ export const translations = {
       kotlin: "Lo mejor para apps de Android",
       objective_c: "Para apps de iPhone antiguas",
       c_sharp: "Lo mejor para apps de Windows",
-      dot_net: "Lo mejor para empresas"
+      dot_net: "Lo mejor para empresas",
+      multiAgent: "Soportar flujos de trabajo colaborativos multiagente",
+      memory: "Habilitar estado de agente a largo plazo y retención de memoria",
+      tools: "Integrar llamadas a herramientas personalizadas y ejecución de funciones",
+      webSearch: "Acceder a búsqueda web en tiempo real y navegación de datos en vivo"
     },
     categories: {
       web: "Aplicación Web",
       mobile: "Aplicación Móvil",
       windows: "Aplicación Windows",
-      picture: "Generación de Imágenes"
+      picture: "Generación de Imágenes",
+      agent: "Agente de IA"
     },
     custom_prompt_label: "Prompt Personalizado",
     custom_prompt_placeholder: "Pega o escribe tu prompt personalizado aquí para compartir con la comunidad...",
@@ -501,13 +521,18 @@ export const translations = {
       kotlin: "Androidアプリに最適",
       objective_c: "古いiPhoneアプリ向け",
       c_sharp: "Windowsアプリに最適",
-      dot_net: "企業向けに最適"
+      dot_net: "企業向けに最適",
+      multiAgent: "協調的なマルチエージェントワークフローをサポート",
+      memory: "長期的なエージェント状態とメモリ保持を有効化",
+      tools: "カスタムツール呼び出しと関数実行の統合",
+      webSearch: "リアルタイムWeb検索とライブデータ閲覧へのアクセス"
     },
     categories: {
       web: "ウェブアプリ",
       mobile: "モバイルアプリ",
       windows: "Windowsアプリ",
-      picture: "画像生成"
+      picture: "画像生成",
+      agent: "AIエージェント"
     },
     custom_prompt_label: "カスタムプロンプト",
     custom_prompt_placeholder: "コミュニティと共有するカスタムプロンプトをここに貼り付けるか書き込んでください...",
@@ -578,13 +603,18 @@ export const translations = {
       kotlin: "最适合Android应用",
       objective_c: "适用于旧版iPhone应用",
       c_sharp: "最适合Windows应用",
-      dot_net: "最适合企业"
+      dot_net: "最适合企业",
+      multiAgent: "支持协同多智能体工作流",
+      memory: "启用长期智能体状态和内存保留",
+      tools: "整合自定义工具调用和函数执行",
+      webSearch: "访问实时网页搜索和在线数据浏览"
     },
     categories: {
       web: "Web应用",
       mobile: "移动应用",
       windows: "Windows应用",
-      picture: "图片生成"
+      picture: "图片生成",
+      agent: "AI智能体"
     },
     custom_prompt_label: "自定义提示词",
     custom_prompt_placeholder: "在此粘贴或编写您的自定义提示词，与社区分享...",

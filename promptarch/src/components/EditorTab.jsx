@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Loader2, Wand2, Globe, Smartphone, Monitor, Image as ImageIcon, Code2, Palette, Box, Command, CheckCircle, Terminal, Download, Save, ClipboardPaste, FileText, Wrench, Waves, BookOpen, Shield, ShieldCheck, ChevronDown, ChevronUp, Scan, Lightbulb, Zap, Bug, Layers, TestTube, BookMarked, Eye, BarChart3, Cloud, Layout, FolderTree, AlertTriangle } from 'lucide-react';
+import { Sparkles, Loader2, Wand2, Globe, Smartphone, Monitor, Image as ImageIcon, Code2, Palette, Box, Command, CheckCircle, Terminal, Download, Save, ClipboardPaste, FileText, Wrench, Waves, BookOpen, Shield, ShieldCheck, ChevronDown, ChevronUp, Scan, Lightbulb, Zap, Bug, Layers, TestTube, BookMarked, Eye, BarChart3, Cloud, Layout, FolderTree, AlertTriangle, Bot } from 'lucide-react';
 
 // Collapsible Section wrapper
 function CollapsibleSection({ title, icon: Icon, children, defaultOpen = false, badge }) {
@@ -373,7 +373,7 @@ export default function EditorTab({
                 <label className="text-[10px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest border-l-2 border-industrial-500 dark:border-acid-500 pl-2">Category</label>
                 <div className={`grid grid-cols-3 sm:grid-cols-4 ${editorState.targetTool === 'claude' ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-2`}>
                   {(() => {
-                    const cats = ['web', 'mobile', 'windows', 'engineering', 'fluid_mechanics'];
+                    const cats = ['web', 'mobile', 'windows', 'engineering', 'fluid_mechanics', 'agent'];
                     if (editorState.targetTool === 'claude') {
                       cats.push('claude_md');
                     }
@@ -395,6 +395,7 @@ export default function EditorTab({
                         {cat === 'fluid_mechanics' && <Waves size={18} />}
                         {cat === 'general' && <BookOpen size={18} />}
                         {cat === 'claude_md' && <Code2 size={18} />}
+                        {cat === 'agent' && <Bot size={18} />}
                         {t(`categories.${cat}`) || cat}
                       </button>
                     ));
@@ -575,6 +576,8 @@ export default function EditorTab({
                       ? (t('tools_label') || 'Tools & Software') 
                       : selectedCategory === 'claude_md' 
                       ? 'Prompt Directives' 
+                      : selectedCategory === 'agent'
+                      ? 'Agent Capabilities'
                       : 'Tech Stack'}
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -586,6 +589,7 @@ export default function EditorTab({
                       else if (selectedCategory === 'engineering') items = ['matlab', 'python_sci', 'latex', 'solidworks', 'autocad', 'excel_data'];
                       else if (selectedCategory === 'fluid_mechanics') items = ['ansys_fluent', 'openfoam', 'matlab', 'python_sci', 'latex', 'excel_data'];
                       else if (selectedCategory === 'claude_md') items = ['skipFiller', 'codeDiffs', 'noExplanation', 'dryRunOnly'];
+                      else if (selectedCategory === 'agent') items = ['multiAgent', 'memory', 'tools', 'webSearch'];
                       return items.map(tech => {
                         const iconLookup = {
                           react: Code2, tailwind: Palette, threejs: Box,
@@ -596,13 +600,16 @@ export default function EditorTab({
                           ansys_fluent: Waves, openfoam: Waves,
                           solidworks: Box, autocad: Box,
                           google_scholar: BookOpen, jupyter: Code2, excel_data: Terminal,
-                          skipFiller: Eye, codeDiffs: Terminal, noExplanation: Lightbulb, dryRunOnly: TestTube
+                          skipFiller: Eye, codeDiffs: Terminal, noExplanation: Lightbulb, dryRunOnly: TestTube,
+                          multiAgent: Layers, memory: BookMarked, tools: Wrench, webSearch: Globe
                         };
                         const Icon = iconLookup[tech] || Code2;
                         const displayName = tech === 'skipFiller' ? 'Skip Filler' :
                                             tech === 'codeDiffs' ? 'Target Diffs Only' :
                                             tech === 'noExplanation' ? 'No Explanations' :
                                             tech === 'dryRunOnly' ? 'Dry Run Plan' :
+                                            tech === 'multiAgent' ? 'Multi Agent' :
+                                            tech === 'webSearch' ? 'Web Search' :
                                             tech.replace(/_/g, ' ');
                         return (
                         <label key={tech} className="flex items-start gap-3 p-3 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer hover:border-industrial-500 dark:hover:border-acid-500 transition-colors group">

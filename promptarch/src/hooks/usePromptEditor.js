@@ -32,6 +32,13 @@ const SECURITY_OPTIONS = {
     { key: 'contentSafety', label: 'Content Safety' },
     { key: 'copyrightAwareness', label: 'Copyright Awareness' },
   ],
+  agent: [
+    { key: 'promptInjection', label: 'Prompt Injection Defense' },
+    { key: 'toolValidation', label: 'Tool Parameter Validation' },
+    { key: 'rateLimiting', label: 'Rate Limiting & Cost Guarding' },
+    { key: 'dataEncryption', label: 'Data Encryption & Privacy' },
+    { key: 'authBestPractices', label: 'Access Control & Auth' },
+  ],
 };
 
 const SKILL_OPTIONS = [
@@ -53,6 +60,7 @@ const getSecurityOptionsForCategory = (category) => {
   if (['web', 'mobile', 'windows'].includes(category)) return SECURITY_OPTIONS.tech;
   if (['engineering', 'fluid_mechanics'].includes(category)) return SECURITY_OPTIONS.engineering;
   if (category === 'picture') return SECURITY_OPTIONS.picture;
+  if (category === 'agent') return SECURITY_OPTIONS.agent;
   return SECURITY_OPTIONS.general;
 };
 
@@ -183,6 +191,12 @@ export const usePromptEditor = (token, lang) => {
       newStack.noExplanation = true;
       newStack.dryRunOnly = false;
       setTone('minimalist'); setStyle('modern');
+    } else if (category === 'agent') {
+      newStack.multiAgent = false;
+      newStack.memory = true;
+      newStack.tools = true;
+      newStack.webSearch = false;
+      setTone('technical'); setStyle('minimalist');
     }
     setTechStack(newStack);
   };
@@ -368,6 +382,12 @@ export const usePromptEditor = (token, lang) => {
           output += `- Detail physical boundary conditions (inlets, outlets, walls, symmetry) explicitly.\n`;
           output += `- Suggest suitable CFD mesh configurations and solver settings (e.g. SIMPLE, PISO).\n`;
           output += `- Simplify Navier-Stokes equations systematically and show step-by-step analytical derivation.\n`;
+        } else if (selectedCategory === 'agent') {
+          output += `- Design autonomous, goal-oriented agent logic with self-correcting mechanisms.\n`;
+          output += `- Enable structured outputs (e.g. JSON schemas) for reliable tool integration.\n`;
+          output += `- Implement robust memory systems separating transient task state from permanent memory.\n`;
+          output += `- Safeguard tool execution by validating and sanitizing parameters before execution.\n`;
+          output += `- Optimize agent latency by running parallel tool calls and minimizing agent-loop cycles.\n`;
         }
         
         // Append existing methodology parts if there are any
@@ -490,18 +510,23 @@ export const usePromptEditor = (token, lang) => {
 
     // --- ALL OTHER CATEGORIES ---
     const isClaudeMdCategory = selectedCategory === 'claude_md';
+    const isEngCategory = ['engineering', 'fluid_mechanics'].includes(selectedCategory);
     const stackList = isClaudeMdCategory 
       ? '' 
       : Object.keys(techStack).filter(k => techStack[k]).map(k => k.replace(/_/g, ' ')).join(', ');
-    const isTechCategory = ['web', 'mobile', 'windows'].includes(selectedCategory);
-    const isEngCategory = ['engineering', 'fluid_mechanics'].includes(selectedCategory);
+    let stackTitle = 'TOOLS & SOFTWARE';
+    if (['web', 'mobile', 'windows'].includes(selectedCategory)) {
+      stackTitle = 'TECH STACK';
+    } else if (selectedCategory === 'agent') {
+      stackTitle = 'AGENT CAPABILITIES';
+    }
 
     const parts = [];
 
     if (outputSections.roleSection) parts.push({ title: 'ROLE', content: role });
     if (outputSections.taskSection) parts.push({ title: 'TASK', content: task });
     if (stackList && outputSections.stackSection) {
-      parts.push({ title: isTechCategory ? 'TECH STACK' : 'TOOLS & SOFTWARE', content: stackList });
+      parts.push({ title: stackTitle, content: stackList });
     }
     if (outputSections.toneSection) {
       parts.push({ title: 'TONE & STYLE', content: `- Tone: ${tone}\n- Style: ${style}${designFocus ? `\n- Focus: ${designFocus}` : ''}` });
@@ -580,6 +605,13 @@ export const usePromptEditor = (token, lang) => {
           noExplanation: { type: "BOOLEAN" },
           dryRunOnly: { type: "BOOLEAN" }
         }
+      : selectedCategory === 'agent'
+      ? {
+          multiAgent: { type: "BOOLEAN" },
+          memory: { type: "BOOLEAN" },
+          tools: { type: "BOOLEAN" },
+          webSearch: { type: "BOOLEAN" }
+        }
       : {
           threejs: { type: "BOOLEAN" },
           tailwind: { type: "BOOLEAN" },
@@ -630,6 +662,7 @@ export const usePromptEditor = (token, lang) => {
     else if (selectedCategory === 'fluid_mechanics') { context = "fluid mechanics and CFD simulation expert prompt"; defaultTone = "technical"; defaultStyle = "classic"; }
     else if (selectedCategory === 'general') { context = "general knowledge and analysis prompt"; }
     else if (selectedCategory === 'claude_md') { context = "CLAUDE.md developer guidelines and workspace rules"; defaultTone = "minimalist"; defaultStyle = "modern"; }
+    else if (selectedCategory === 'agent') { context = "AI agent configuration and behavior prompt"; defaultTone = "technical"; defaultStyle = "minimalist"; }
 
     const prompt = `Generate ${context} for: "${magicInput}". Pick a tone and style that best fits the domain (e.g. "technical" for engineering, "creative" for art, "professional" for business). Ensure the response fields (role, task, focus, tone, style, suggestedSecurityChecks, suggestedSkills) are tailored to this context. Select relevant security checks and capability skills.`;
     const result = await callGemini(prompt, schema);
